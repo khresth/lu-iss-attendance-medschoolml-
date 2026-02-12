@@ -10,7 +10,7 @@ echo Checking if Python and required packages are ready...
 echo 
 echo.
 
-:: Check if python is available
+
 where python >nul 2>&1
 if %ERRORLEVEL% neq 0 (
     echo ERROR: Python is not installed or not in PATH.
@@ -22,7 +22,7 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-:: Check if required packages are importable
+
 python -c "import gradio, pandas, plotly, openpyxl" >nul 2>&1
 if %ERRORLEVEL% neq 0 (
     echo Some required packages are missing (gradio, pandas, plotly, openpyxl).
