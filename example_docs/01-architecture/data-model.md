@@ -2,77 +2,63 @@
 
 ## Overview
 
-Describe the data layer — database technology, ORM, and general approach to data modelling.
+The LU Medical School Attendance Tracker uses a file-based data model with CSV files as the primary data source, imported from the ITPI attendance dashboard. Data is processed in-memory using Pandas DataFrames for analysis and visualization.
 
-**Content should include:**
-- Database engine (local and deployed)
-- ORM used
-- Code-first migrations managed via migrations project
-- Migrations run automatically on startup via migration service
+- **Data source:** CSV files imported from ITPI attendance dashboard
+- **Processing:** Pandas DataFrames for in-memory data manipulation
+- **Storage:** Local file system with no persistent database
+- **Data refresh:** Manual CSV file updates from ITPI system
 
-## Entity Relationship Diagram
+## Data Sources Structure
 
-Include a comprehensive ER diagram of the database schema.
+The system processes multiple CSV files containing attendance and placement data for different academic years.
 
-**Content should include:**
-- All entities and their relationships
-- Primary keys, foreign keys, and indexes
-- Cardinality notation (one-to-many, many-to-many)
-- Colour-coding or grouping by domain area
+- **Attendance data files:** lusi_mbchb101.csv, lusi_mbchb201.csv, lusi_mbchb301.csv, lusi_mbchb401.csv, lusi_mbchb501.csv
+- **Rotation mapping files:** y2r1.csv, y3r1.csv, y4r1.csv, y5r1.csv
+- **Student notes file:** Book1.xlsx (optional, contains notes and email addresses)
+- **Data relationships:** Attendance records linked to placement information via student ID
 
-## Core Entities
+## Core Data Entities
 
-Document each entity, its purpose, and key fields.
+### Attendance Records
 
-### User Identity
+- **studentId:** Unique student identifier (string)
+- **firstName:** Student first name (string)
+- **surname:** Student surname (string)
+- **academicAdvisor:** Assigned academic advisor (string)
+- **startDateTime:** Attendance session timestamp (ISO datetime format)
+- **present:** Boolean attendance status (true/false)
+- **selfCertInfo:** Self-certification information (optional string)
+- **cancelled:** Cancellation status (boolean, excluded from calculations)
+- **Module/Year information:** Derived from filename (MBCHB101-501)
 
-**Content should include:**
-- How user identity is managed (local users table vs delegated to identity provider)
-- User ID sourced from JWT claims
-- How user identity links to application data
-- Access control tables (e.g., whitelist for external users)
+### Placement Data
 
-### [Domain Entity A]
+- **Student ID:** Mapping to rotation placements (links to attendance records)
+- **Year-specific placement information:** Y2R1, Y3R1, Y4R1, Y5R1 files contain rotation mappings
+- **Placement types:** Identified via regex pattern matching (MED.PLAC, MED.OTHR, Palliative Care)
+- **Rotation scheduling information:** Group, Pattern, Rotation columns in mapping files
 
-**Content should include:**
-- Entity description — fields, lifecycle states, metadata
-- Owned types and nested objects
-- Relationship to user
-- Tags and categorisation
+### Student Notes
 
-### [Domain Entity B]
+- **Source:** Book1.xlsx Excel file (Sheet1)
+- **studentId:** Reference to student (from 'Student ID' column)
+- **studentEmail:** Student contact information (from 'Email' column)
+- **notes:** Combined notes from 'Notes 1' and 'Notes 2' columns, concatenated with comma separator
+- **Optional file:** If not provided, notes will be empty but app still works
 
-**Content should include:**
-- Entity description — fields, states
-- Related sub-entities
-- Relationship chain (e.g., User -> Parent Entity -> Child Entity -> Details)
+## Data Processing Pipeline
 
-### AI & Content
-
-**Content should include:**
-- `Prompt` entity — AI prompt templates by feature and lifecycle stage
-- `ResourceLink` — learning materials and resources
-- Any other AI-related content entities
-
-### Terms & Compliance
-
-**Content should include:**
-- `TermsAcceptance` — tracks user consent with timestamps
-- Audit and compliance considerations
-
-## Migration Strategy
-
-**Content should include:**
-- How to create a new migration (command with project flags)
-- How migrations are applied (migration service runs before API)
-- Rollback procedures
-- Naming conventions for migrations
-- How to handle data migrations vs schema migrations
+- CSV file loading and validation using Pandas read_csv
+- Data cleaning and standardization (date parsing, type conversion, missing value handling)
+- Date/time processing for attendance analysis (timezone removal, date range filtering)
+- Placement pattern matching using regex for MED.PLAC, MED.OTHR, Palliative Care identification
+- In-memory data aggregation and calculations for reporting (attendance percentages, summaries)
 
 ## Data Access Patterns
 
-**Content should include:**
-- Repository pattern usage
-- Query patterns (filtering by user, pagination)
-- How owned types are queried
-- Performance considerations (eager vs lazy loading, indexes)
+- File-based data loading via Pandas read_csv with UTF-8 encoding
+- In-memory filtering and aggregation using Pandas DataFrame operations
+- Date range queries for trend analysis using Pandas date filtering
+- Placement pattern matching for attendance context using regex
+- Student-specific data retrieval and analysis by studentId

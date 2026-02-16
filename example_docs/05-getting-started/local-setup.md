@@ -2,109 +2,74 @@
 
 ## Prerequisites
 
-List all tools and their required versions.
-
-**Content should include:**
-
 | Tool | Version | Installation |
 |------|---------|-------------|
-| *[Backend Runtime/SDK]* | *[version]* | *Download link or package manager command* |
-| Node.js | *[version] LTS* | *Download link or `nvm` command* |
-| Docker Desktop | Latest | *Download link* |
-| Git | Latest | *Download link* |
-| *[Orchestrator workload]* | Latest | *Installation command* |
-| *[Cloud CLI]* | Latest | *Installation command* |
-| IDE | *Recommended IDEs* | *Extension recommendations* |
+| Python | 3.8+ | Download from python.org or package manager |
+| pip | Latest | Included with Python |
+| Git | Latest | Download from git-scm.com |
+| IDE | VS Code, PyCharm | Recommended with Python extensions |
 
 ## Step-by-Step Setup
 
 ### 1. Clone the Repository
 
-**Content should include:**
 ```bash
-git clone <repo-url>
-cd [repository-name]
+git clone <repository-url>
+cd lu-iss-attendance-medschoolml-
 ```
 
-### 2. Install Backend Tools
+### 2. Install Python Dependencies
 
-**Content should include:**
 ```bash
-cd backend
-[tool restore command]    # Installs formatter, migration tool, API doc CLI
-[orchestrator install command]
+pip install -r requirements.txt
 ```
 
-### 3. Install Frontend Dependencies
+### 3. Prepare Data Files
 
-**Content should include:**
+- Place CSV files from ITPI dashboard in the project root directory
+- Required files: lusi_mbchb101.csv, lusi_mbchb201.csv, lusi_mbchb301.csv, lusi_mbchb401.csv, lusi_mbchb501.csv
+- Optional placement files: y2r1.csv, y3r1.csv, y4r1.csv, y5r1.csv
+- Optional notes file: Book1.xlsx (student notes and email addresses)
+
+### 4. Start the Application
+
 ```bash
-cd frontend
-npm install
+python app.py
 ```
 
-### 4. Configure User Secrets
+- Application will start on localhost (default port 7860 for Gradio)
+- Web interface will open automatically in browser
+- If browser doesn't open, navigate to the URL shown in terminal
 
-**Content should include:**
-- How to set the database password: user secrets or environment variable
-- How to configure cloud service connections for local development
-- Any API keys needed locally
+### 5. Verify Everything Works
 
-### 5. Start the Full Stack
-
-**Content should include:**
-```bash
-# From the repository root
-[orchestrator run command]
-```
-- Database password prompt and default value
-- What to expect: dashboard opens, services start
-- Dashboard URL for monitoring
-- Frontend URL (typically `http://localhost:[port]`)
-- API URL (via gateway)
-- If frontend doesn't auto-start: manual start command
-
-### 6. Verify Everything Works
-
-**Content should include:**
-- Check dashboard — all services green
-- Open frontend in browser — auth page loads
-- Sign in with test credentials (if available)
-- Check API health: `curl https://localhost:[port]/health`
-
-## Enable Git Hooks
-
-**Content should include:**
-```bash
-git config core.hooksPath .husky
-```
-- What the hooks do (lint, format on commit)
-- How to bypass temporarily if needed (not recommended)
+- Check that the Gradio interface loads in browser
+- Upload a CSV file to test data processing
+- Verify that attendance charts and statistics display correctly
+- Check that placement tracking features work as expected
 
 ## IDE Configuration
 
 ### VS Code
 
-**Content should include:**
-- Recommended extensions list
-- Workspace settings for formatting, linting
-- Debug launch configurations
-- How to attach debugger to API and frontend
+- Python extension (Microsoft)
+- Jupyter extension for notebook support
+- Pylance for IntelliSense
+- Recommended workspace settings for Python formatting
 
-### JetBrains IDE
+### PyCharm
 
-**Content should include:**
-- Recommended plugins
-- Solution/project configuration
-- Run/debug configuration for the orchestrator
+- Python plugin enabled
+- Configure Python interpreter for the project
+- Set up run configuration for app.py
 
 ## Troubleshooting Local Setup
 
-**Content should include:**
-- Docker not running -> services won't start
-- Port conflicts -> how to check and resolve
-- Database container fails -> check Docker resources
-- npm install fails -> check Node version, clear cache
-- Orchestrator workload not installed -> error message and fix
-- Package restore fails -> check feed authentication
-- Frontend can't reach API -> check gateway is running, CORS config
+| Issue | Solution |
+|-------|----------|
+| Python not found | Ensure Python 3.8+ is installed and in PATH |
+| Module import errors | Run `pip install -r requirements.txt` again |
+| CSV file errors | Check file format and encoding (UTF-8) |
+| Gradio doesn't start | Check port conflicts, try different port |
+| Charts not displaying | Ensure Plotly is properly installed |
+| Data processing slow | Check CSV file sizes, consider sampling large datasets |

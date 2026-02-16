@@ -2,114 +2,121 @@
 
 ## Overview
 
-End-user documentation for the [Project Name] platform. Written for the application's target users.
+End-user documentation for the LU Medical School Attendance Tracker. Written for medical school staff who need to analyze student attendance patterns and placement tracking.
 
 ## Getting Started
 
-### Creating Your Account
+### Accessing the Application
 
-**Content should include:**
-- How to access the application (URL)
-- Signing in with organizational credentials ([User Type A])
-- Signing in with social providers ([User Type B])
-- First-time setup: onboarding steps (e.g., acknowledging terms, accepting usage policies)
-- What information is collected and how it's used
+- Launch the application by running `python app.py` on your local machine
+- Application opens in web browser (typically http://localhost:7860)
+- No login required - local application access
+- Ensure CSV data files are in place before starting
 
-### Navigating the Dashboard
+### Preparing Your Data
 
-**Content should include:**
-- Overview of the main dashboard layout
-- How to access each feature
-- Understanding your progress and history
-- Screenshots of the main navigation elements
+- Export attendance data from ITPI dashboard in CSV format
+- Place CSV files in the same directory as app.py
+- Required files: lusi_mbchb101.csv, lusi_mbchb201.csv, lusi_mbchb301.csv, lusi_mbchb401.csv, lusi_mbchb501.csv
+- Optional placement files: y2r1.csv, y3r1.csv, y4r1.csv, y5r1.csv
+- Optional notes file: Book1.xlsx
+
+### Navigating the Interface
+
+- Main dashboard with file upload area at the top
+- Module selection and date range controls
+- Analysis parameters (thresholds, sorting options)
+- Tabbed output display with four views:
+  - **Attendance Summary**: Students below threshold
+  - **Student Details**: Individual student charts
+  - **Placement Analysis**: Medical placement attendance
+  - **Attendance Macro**: Recent placement activity
 
 ## Features
 
-### [Feature A]
+### Attendance Data Upload
 
-**Content should include:**
-- What the feature does
-- How to use it (step-by-step)
-- Supported file formats (if applicable)
-- Understanding the results/feedback
-- Tips for getting the most value
-- Screenshots showing the flow
+1. Click "Load / Refresh Data" button after uploading files
+2. Upload attendance CSV files through the file interface
+3. Supported format: CSV with UTF-8 encoding
+4. Required columns: studentId, firstName, surname, academicAdvisor, startDateTime
+5. Optional columns: present, selfCertInfo, cancelled
+6. Automatic data validation and cleaning occurs on load
 
-### [Feature B]
+### Attendance Percentage Tracking
 
-**Content should include:**
-- What the feature does
-- How to use it (step-by-step)
-- Adding context for targeted results
-- Understanding the analysis
-- Tips for getting the most useful output
-- Screenshots showing the flow
+- View students with attendance below selected threshold
+- Filter by specific date ranges using dropdown selectors
+- Sort results by attendance percentage or surname
+- See overall attendance statistics for selected module
+- Compare attendance across different time periods
+- Export data by copying from HTML tables
 
-### [Feature C]
+### Placement Monitoring
 
-**Content should include:**
-- What the feature offers
-- How to start
-- Types of content generated
-- Understanding feedback
-- Tips for effective use
-- Screenshots showing the flow
+- Track student placement attendance patterns
+- Automatic identification using pattern matching (MED.PLAC, MED.OTHR, Palliative Care)
+- View placement days attended by week
+- Filter by group/rotation and placement pattern
+- Correlate placement data with attendance data
+- Identify students with low placement attendance
 
-### [Feature D] - Tracker
+### Trend Visualization
 
-**Content should include:**
-- How to create and manage items
-- Adding details and metadata
-- Tracking status
-- Linking other features to tracked items
-- Screenshots showing the tracker
+- Interactive charts using Plotly
+- Individual student attendance trends over time
+- Cumulative attendance percentage graphs
+- Compare student against class average
+- Click and drag to zoom on charts
+- Save charts as images using the camera icon
 
-### Learning Resources
+### Student Notes Management
 
-**Content should include:**
-- Browsing available resources
-- Resource categories and types
-- How resources are recommended based on your activity
-- External links and additional support
+- Upload Book1.xlsx file with student notes (optional)
+- Notes 1 and Notes 2 fields are concatenated for display
+- Student email addresses shown when available
+- Notes appear in attendance and placement reports
+- Helps track student-specific observations and context
 
-## Account Management
+## Data Analysis
 
-### Profile Settings
+### Understanding Attendance Metrics
 
-**Content should include:**
-- Viewing your profile information
-- What can and cannot be changed
-- Communication preferences (if applicable)
+- **Attendance %**: (Present sessions / Total sessions) × 100
+- **Present**: Student marked as attending the session
+- **Self-certification**: Flagged absence with student-provided reason
+- **Cancelled**: Sessions excluded from calculations
+- Use threshold filter to identify at-risk students
+- Trend analysis shows attendance patterns over time
 
-### Data & Privacy
+### Placement Pattern Analysis
 
-**Content should include:**
-- What data is stored about you
-- How AI processes your data (data is not used for training)
-- How to request your data
-- How to delete your account and data
-- Privacy policy link
-
-### Signing Out
-
-**Content should include:**
-- How to sign out
-- What happens to your data when you sign out (it's preserved)
-- Signing back in and resuming your work
+- **MED.PLAC**: Automatic medical placement check-ins
+- **MED.OTHR**: Manual medical placement entries
+- **Palliative Care**: Palliative care placement sessions
+- Patterns identified using regex matching on event descriptions
+- Placement attendance tracked separately from teaching sessions
+- Weekly breakdown shows days attended per placement
 
 ## Tips for Best Results
 
-**Content should include:**
-- General tips for getting the most from AI feedback
-- How to iterate using feedback
-- When to seek human advice in addition to AI feedback
-- Understanding AI limitations and responsible use
+- Ensure CSV files are properly formatted before upload (UTF-8 encoding)
+- Use consistent file naming: lusi_mbchb[year][semester].csv
+- Regularly update data from ITPI dashboard for current insights
+- Use date range filters to focus on specific teaching periods
+- Combine attendance and placement data for comprehensive analysis
+- Check "Show only self-certified absences" to identify unexplained absences
+- Use "Also sort by surname" for alphabetical student lists
 
 ## Troubleshooting
 
-**Content should include:**
-- Can't sign in -> check credentials, try a different browser
-- Page not loading -> check internet connection, clear cache
-- Feedback seems inaccurate -> AI limitations, how to report issues
-- File upload failing -> check file format and size
-- How to report a bug or provide feedback
+| Problem | Solution |
+|---------|----------|
+| File upload failing | Check CSV format is UTF-8, verify required columns |
+| Charts not displaying | Verify Plotly installation: `pip install plotly` |
+| Data loading errors | Check required columns exist, re-export from ITPI |
+| Application won't start | Verify Python and dependencies: `pip install -r requirements.txt` |
+| Performance issues | Use smaller date ranges, close other applications |
+| Port already in use | Stop other applications using port 7860 |
+
+**Reporting Issues:** Contact medical school IT department with error messages and steps to reproduce.

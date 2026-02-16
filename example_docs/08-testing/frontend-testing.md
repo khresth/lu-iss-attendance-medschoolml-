@@ -2,63 +2,58 @@
 
 ## Overview
 
-How to write and run tests for the frontend.
+How to write and run tests for the LU Medical School Attendance Tracker frontend (Gradio interface).
 
 ## Running Tests
 
+Since this is a Gradio-based application, testing is primarily manual:
+
 ```bash
-# All unit tests
-cd frontend && npm run test
+# Start the application for testing
+python app.py
 
-# Watch mode (re-runs on file change)
-cd frontend && npm run test -- --watch
+# Test with different browsers if needed
+# Access http://localhost:7860 in browser
 
-# Specific file
-cd frontend && npm run test -- path/to/file.test.tsx
-
-# With coverage
-cd frontend && npm run test -- --coverage
+# Manual testing of all features
+# Test file upload, data processing, chart generation
 ```
 
-## Writing Unit Tests
+## Writing Tests
 
-### Conventions
+### Test Data Preparation
 
-**Content should include:**
-- Test file naming: `ComponentName.test.tsx` or `hookName.test.ts`
-- Test file location: `__tests__/` directory colocated with source
-- Test structure: `describe` block per component/hook, `it` block per behaviour
-- Descriptive test names that read as sentences
+- Create sample CSV files for testing different scenarios
+- Test data with various data quality issues (missing values, bad formats)
+- Prepare edge case data (empty files, large datasets 5000+ rows)
+- Create test data for different academic years (Y1-Y5)
+- Document test data requirements in test_data/README.md
 
-### Testing Components
+### Interface Testing
 
-**Content should include:**
-- Testing library philosophy: test user behaviour, not implementation
-- How to render components with required providers (data fetching, navigation, theme)
-- Common queries: `getByText`, `getByRole`, `getByTestId`
-- User interaction simulation: `fireEvent`, `userEvent`
-- Async testing: `waitFor`, `findBy` queries
-- Snapshot testing: when to use (sparingly) and when to avoid
+- Test Gradio component functionality (file upload, dropdowns, buttons)
+- Verify file upload handling (CSV, Excel formats)
+- Test chart generation and display (Plotly charts render correctly)
+- Test user interface responsiveness (window resizing)
+- Test error handling and user feedback (clear error messages)
 
-### Example Component Test
+### Data Processing Tests
 
-**Content should include:**
-- Complete example test for a typical screen component
-- Example with data fetching provider
-- Example testing loading, success, and error states
-- Example testing user interaction (button press, form submission)
+- Test data loading functions with various inputs
+- Validate data cleaning logic (date parsing, type conversion)
+- Test attendance calculations against expected values
+- Verify placement pattern matching with test descriptions
+- Test error handling with invalid/missing data
 
 ### Testing Hooks
 
-**Content should include:**
-- `renderHook` from testing library
-- Testing custom hooks with dependencies (API client, stores)
-- Testing data fetching hooks (with provider)
-- Testing state management store hooks
+Not applicable for Gradio application - no React hooks or custom hooks to test.
+All state is managed through Gradio's internal state management and function returns.
 
 ### Testing Data Hooks
 
-**Content should include:**
+Not applicable - this application uses direct function calls, not data hooks.
+Data is passed directly from Gradio inputs to processing functions via the `inputs` parameter.
 - Mocking API responses with API mocking library or manual mocks
 - Testing query hooks (loading, success, error states)
 - Testing mutation hooks (optimistic updates, error handling)
@@ -66,40 +61,21 @@ cd frontend && npm run test -- --coverage
 
 ## Mocking
 
-### API Mocks
-
-**Content should include:**
-- API mocking library setup for intercepting API calls (if used)
-- Manual mock approach for API client
-- How to create typed mock responses
-- Resetting mocks between tests
-
-### Navigation Mocks
-
-**Content should include:**
-- How to mock the navigation/routing library
-- Testing navigation actions (navigate, goBack)
-- Providing navigation context in tests
-
-### Store Mocks
-
-**Content should include:**
-- How to mock state management stores
-- Providing initial state for tests
-- Testing state changes
+Not applicable for this Gradio application - no API calls to mock, no navigation, no state management stores.
+All functionality is local with direct function calls.
 
 ## Accessibility Testing
 
-**Content should include:**
-- Testing with accessibility queries (`getByRole`, `getByLabelText`)
-- Automated a11y checks (e.g., jest-axe or similar)
-- What to check: labels, roles, contrast, keyboard navigation
+- Test keyboard navigation through Gradio interface (Tab, Enter, Space)
+- Verify form labels are descriptive and clear
+- Check color contrast of charts and text (Gradio defaults are generally good)
+- Test with browser zoom (Ctrl +/-) to ensure readability
+- Gradio provides basic accessibility - no automated a11y checks needed
 
 ## Common Pitfalls
 
-**Content should include:**
-- Forgetting to wrap components in required providers
-- Testing implementation details instead of user behaviour
-- Not waiting for async operations
-- Over-using snapshots
-- Not cleaning up after tests (timers, event listeners)
+- Not testing with real CSV data files (always test with actual data)
+- Testing only happy path - missing error handling verification
+- Not waiting for data processing to complete before checking results
+- Testing on only one browser (test on at least Chrome and Firefox)
+- Not cleaning up test data files after testing (delete temporary test files)

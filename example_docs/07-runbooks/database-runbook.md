@@ -1,140 +1,200 @@
-# Database Runbook
+# Data Management Runbook
 
 ## Overview
 
-Operational procedures for database management, maintenance, and troubleshooting.
+Operational procedures for CSV data management, maintenance, and troubleshooting.
 
-## Connection Information
+## Data File Management
 
-**Content should include:**
+### Data Sources
 
-| Environment | Server | Database | Authentication |
-|------------|--------|----------|---------------|
-| Local | `localhost,[port]` | *DB name* | SQL auth (password in user secrets) |
-| Staging | *Cloud database server* | *DB name* | Managed identity / connection string in secrets manager |
-| Production | *Cloud database server* | *DB name* | Managed identity / connection string in secrets manager |
+| Data Type | Source | Format | Update Frequency |
+|------------|--------|---------|------------------|
+| Attendance Data | ITPI Dashboard Export | CSV | Monthly/Weekly |
+| Placement Mapping | ITPI Dashboard Export | CSV | Termly/As needed |
+| Student Notes | Manual Entry | Excel (Book1.xlsx) | As needed |
 
-- How to connect from developer machines
-- Required tools (e.g., Azure Data Studio, pgAdmin, DataGrip)
-- Network access requirements (VPN, firewall rules)
+### File Structure
+
+- Attendance files: lusi_mbchb101.csv, lusi_mbchb201.csv, lusi_mbchb301.csv, lusi_mbchb401.csv, lusi_mbchb501.csv
+- Placement files: y2r1.csv, y3r1.csv, y4r1.csv, y5r1.csv
+- Notes file: Book1.xlsx (optional)
+- Required columns: studentId, firstName, surname, academicAdvisor, startDateTime
+- Optional columns: present, selfCertInfo, cancelled
 
 ## Backup & Recovery
 
-### Automated Backups
+### Automated Backup Procedures
 
-**Content should include:**
-- Automated backup schedule
-- Retention period
-- Geo-redundancy configuration
-- How to verify backups are running
+- Manual backup schedule: Copy CSV files before major updates
+- Retention period: Keep 3 most recent versions of data files
+- Version control: Git tracks code changes
+- Store backups in separate folder or cloud storage
+- Verify backup integrity by testing file opens correctly
 
 ### Point-in-Time Restore
 
-**Content should include:**
-- When to use (data corruption, accidental deletion)
-- Step-by-step procedure:
-  1. Identify the point in time to restore to
-  2. Initiate restore in cloud portal
-  3. Restore creates a new database
-  4. Verify restored data
-  5. Swap connection strings (if replacing production)
-- Expected time to complete
-- Testing restore procedures (schedule regular tests)
+**When to use:** Data corruption, accidental deletion, need to compare with previous version
+
+**Step-by-step procedure:**
+1. Identify backup version to restore (check backup folder)
+2. Copy backup CSV files to application directory
+3. Verify data integrity by loading in application
+4. Test key functionality (charts, calculations)
+5. Update placement mappings if needed
+
+**Expected time:** 5-10 minutes
+**Testing:** Load restored data and verify expected student count
 
 ### Manual Backup
 
-**Content should include:**
-- How to take an on-demand backup
-- Where to store manual backups
-- When manual backups are needed (before risky migrations, etc.)
+**How to take on-demand backup:**
+1. Copy all CSV files and Book1.xlsx to backup folder
+2. Include date in backup folder name (e.g., backup_2024_01_15)
+3. Store in separate location (external drive, cloud storage)
 
-## Migration Operations
+**When needed:** Before ITPI data refreshes, before major analysis, weekly
 
-### Applying Migrations
+**Verification:** Open backed-up CSV files to confirm readable
 
-**Content should include:**
-- Standard: Migration service applies on startup
-- Manual: `[database update command]`
-- Verifying migration status: `[migrations list command]`
-- Troubleshooting failed migrations
+**Naming:** backup_YYYY_MM_DD_format
 
-### Creating a New Migration
+## Data Quality Management
 
-**Content should include:**
-```bash
-[migration add command] <Name> \
-  --project [migrations-project] \
-  --startup-project [api-project]
-```
-- Review the generated migration file before applying
-- Check for data loss warnings
-- Test migration against a copy of production data (if significant)
+### Data Validation Procedures
 
-### Rolling Back a Migration
+- Automated validation during file loading in `load_and_clean_data()`
+- Required column presence checks (studentId, firstName, surname, academicAdvisor, startDateTime)
+- Data format validation (dates parsed with pd.to_datetime)
+- Date/time format verification (ISO format expected)
+- Duplicate detection and handling (studentId + timestamp combinations)
 
-**Content should include:**
-- `[database update command] <PreviousMigrationName>`
-- When this is safe vs when it's not (data loss risk)
-- Preferred approach: create a new migration that reverses the change
+### Data Cleaning Operations
+
+- Standardization of student IDs (stripped whitespace, string type)
+- Name formatting preserved as-is from source
+- Date/time parsing with pd.to_datetime and timezone removal
+- Removal of cancelled records (df['cancelled'] == False)
+- Handling of missing or null values via dropna()
+
+### Data Refresh Process
+
+1. Export from ITPI dashboard in CSV format
+2. Save with consistent naming: lusi_mbchb[year][semester].csv
+3. Validate file opens correctly in spreadsheet software
+4. Place in application directory
+5. Click "Load / Refresh Data" in application
+6. Verify student count matches expected
+
+**Update frequency:**
+- Weekly for active monitoring
+- Monthly for periodic reviews
+- Termly for reporting
 
 ## Performance Management
 
-### Monitoring Queries
+### File Processing Optimization
 
-**Content should include:**
-- How to identify slow queries (cloud query performance tools)
-- Key queries to monitor
-- Index recommendations
-- How to add indexes (via ORM migration)
+- Use Pandas vectorized operations instead of loops
+- Filter data early to reduce memory usage
+- Use efficient string matching with regex for placements
+- Avoid unnecessary data copying
+- Progress shown through status messages in Gradio UI
 
-### Connection Pool Management
+### Dataset Size Management
 
-**Content should include:**
-- Connection pool configuration
-- How to monitor pool usage
-- Symptoms of pool exhaustion
-- Tuning pool size
+- Monitor file sizes: typical 1-5 MB per module
+- Performance impact: noticeable above 10,000 rows
+- Archiving: Keep old CSV versions in dated folders
+- No compression needed for current file sizes
+- Storage: Minimal (under 50 MB total per year)
 
 ## Common Procedures
 
-### Add an Index
+### Add New Data Source
 
-**Content should include:**
-- Identify the query that needs optimisation
-- Create migration with index definition
-- Test impact on staging
-- Deploy via standard pipeline
+1. Validate new CSV format matches expected structure
+2. Update `load_and_clean_data()` to handle new data type
+3. Test with sample data file
+4. Update documentation with new file format requirements
+5. Train users on new data source usage
 
-### Archive Old Data
+### Update Placement Patterns
 
-**Content should include:**
-- Data retention policy
-- Archive procedure (move to archive table / delete)
-- Verification after archive
-- Frequency of archive operations
+1. Review `PLACEMENT_PATTERNS` regex in app.py
+2. Test pattern matching with sample event descriptions
+3. Update regex if new placement types need recognition
+4. Verify categorization accuracy with test data
+5. Document any new placement categories
+
+### Data Archive Operations
+
+**Data retention:**
+- Keep current academic year files readily accessible
+- Archive previous years to dated folders
+- Maintain backup of raw ITPI exports
+
+**Archive procedure:**
+1. Create folder with academic year name
+2. Copy CSV files to archive folder
+3. Verify files copy correctly
+4. Document archive location
 
 ## Troubleshooting
 
-### Connection Failures
+### File Access Issues
 
-**Content should include:**
-- Check database firewall rules
-- Check private endpoint configuration
-- Check connection string in secrets manager
-- Check managed identity permissions
-- Check for cloud database outages on status page
+| Problem | Solution |
+|---------|----------|
+| Permission denied | Check file is not open in another program, verify read permissions |
+| File not found | Verify file is in same directory as app.py, check filename spelling |
+| File locked | Close Excel or other programs that may have file open |
+| Encoding errors | Ensure CSV is UTF-8 encoded, re-export from ITPI if needed |
+| Path issues | Use relative paths, avoid special characters in filenames |
 
-### Deadlocks
+### Data Corruption Issues
 
-**Content should include:**
-- How to identify deadlocks in logs
-- Common deadlock causes in the application
-- Resolution steps
-- Preventive measures
+**Symptoms:**
+- Unexpected error messages during loading
+- Missing student records
+- Incorrect attendance calculations
+- Chart display errors
 
-### Database Full / Storage Limit
+**Resolution:**
+1. Identify which file is corrupted
+2. Restore from backup copy
+3. Validate data loads correctly
+4. Re-export from ITPI dashboard if backup unavailable
+5. Document incident for future prevention
 
-**Content should include:**
-- How to check storage usage
-- Immediate actions (clean up, increase tier)
-- Long-term solutions (archiving, data cleanup jobs)
+### Performance Issues
+
+| Symptom | Cause | Solution |
+|---------|-------|----------|
+| Slow loading | Large dataset | Reduce date range, filter data |
+| High memory use | Too many rows loaded | Close other applications |
+| Slow charts | Complex visualization | Use simpler views, export data |
+| UI unresponsive | Browser issue | Refresh page, restart app |
+
+**Hardware considerations:**
+- 8GB RAM recommended for large datasets
+- SSD storage improves file loading
+- Modern browser for best performance
+
+## Data Security
+
+### Access Control
+
+- Data files stored on local machine only
+- Access controlled by operating system file permissions
+- Only authorized medical school staff should have access
+- Do not share student data files via email or cloud
+- Lock workstation when unattended
+
+### Data Privacy
+
+- Student data is confidential and protected
+- Process locally - no external data transmission
+- Follow medical school data protection policies
+- Handle only data necessary for attendance tracking
+- Secure disposal of old data files (secure delete)

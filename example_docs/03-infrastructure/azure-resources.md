@@ -2,90 +2,111 @@
 
 ## Overview
 
-Document all cloud resources used by the platform, their purpose, and how they're provisioned.
+Document all cloud resources used by the LU Medical School Attendance Tracker.
 
-## Resource Topology Diagram
+## Resource Architecture
 
-Include a diagram showing all cloud resources and their relationships.
+Since this is a local application, cloud resources are minimal:
 
-**Content should include:**
-- Resource groups and their contents
-- Network topology (VNets, subnets, private endpoints)
-- Data flow between resources
-- External dependencies (identity provider, etc.)
+- No cloud infrastructure required
+- Local file system storage
+- Local Python runtime environment
+- Optional Git repository hosting (GitHub/GitLab)
+- No external service dependencies
 
-## Compute Resources
+## Local Resources
 
-### Application Hosting
+### Compute Resources
 
-**Content should include:**
-- Hosting model for the API (e.g., App Service, Container Apps, ECS)
-- SKU and scaling configuration
-- Custom domain and TLS certificate
-- Environment variables and app settings
-- Deployment slots (if used)
+- Local machine Python runtime
+- Gradio web server (localhost)
+- In-memory data processing with Pandas
+- No external compute services required
 
-### Gateway
+### Data Storage
 
-**Content should include:**
-- API Gateway / reverse proxy hosting
-- Routing configuration for API and mock server
-- SSL termination
+- Local CSV file storage
+- File system-based data persistence
+- No database services required
+- Local backup procedures
 
-## Data Resources
+## Optional External Resources
 
-### Database
+### Git Repository Hosting
 
-**Content should include:**
-- Server name, database name per environment
-- SKU and performance tier
-- Backup configuration and retention
-- Connection string management (via secrets manager)
-- Firewall rules and private endpoint configuration
+- Optional GitHub/GitLab repository
+- Source code version control
+- Collaboration platform
+- Issue tracking and documentation
 
-## Configuration & Secrets
+### Python Package Repository
 
-### Configuration Service
+- PyPI for package dependencies
+- Requirements.txt for dependency management
+- Virtual environment for isolation
+- Package version pinning
 
-**Content should include:**
-- Instance name per environment
-- Key naming conventions
-- Feature flag definitions
-- How configuration is loaded at application startup
-- Refresh intervals and sentinel keys
+## Resource Requirements
 
-### Secrets Manager
+### System Requirements
 
-**Content should include:**
-- Instance name per environment
-- Secrets inventory (connection strings, API keys, auth secrets)
-- Access policies (which identities can read)
-- Secret rotation schedule and procedures
-- Integration with configuration service (secret references)
+- Python 3.8+ runtime environment
+- Minimum 4GB RAM recommended for processing large datasets
+- Disk space for CSV data files (approximately 50 MB per year)
+- Modern web browser for Gradio interface (Chrome, Firefox, Edge, Safari)
 
-## Networking
+### Network Requirements
 
-**Content should include:**
-- Virtual network configuration
-- Subnet layout
-- Private endpoints for database, secrets manager, configuration service
-- DNS configuration (private DNS zones)
-- Network security groups and rules
+- Internet access required for initial package installation via pip
+- Localhost access (127.0.0.1) for running Gradio application
+- No external network dependencies required for day-to-day operation
+- Optional internet access for Git repository operations
 
-## Monitoring Resources
+## Security Considerations
 
-**Content should include:**
-- Application monitoring instance
-- Log analytics workspace
-- Alert rules and action groups
-- Error tracking project configuration
+### Data Security
 
-## Infrastructure as Code
+- Local file system permissions control access to CSV data files
+- CSV files should be stored in secure location with appropriate access controls
+- No external data transmission - all processing happens locally
+- Student data privacy maintained through local-only deployment
+- Follow medical school data protection policies for handling student records
 
-**Content should include:**
-- IaC tool and project location (e.g., Terraform, Bicep, Pulumi)
-- How to plan and apply changes
-- State file management (remote backend)
-- Module organisation
-- Naming conventions for resources
-- Tagging strategy
+### Application Security
+
+- No external attack surface - application runs locally only
+- Local application access restricted to workstation users
+- No authentication layer required (access controlled by operating system)
+- Secure coding practices for data handling (input validation, error handling)
+
+## Backup and Recovery
+
+### Code Backup
+
+- Use Git for version control and code backup
+- Regular local file backups of the application directory
+- Git version control history tracks all code changes
+- Remote repository synchronization to GitHub/GitLab for redundancy
+
+### Data Backup
+
+- Regular backup of CSV data files before updates
+- Re-export data from ITPI dashboard as needed (source of truth)
+- Local backup storage in dated folders (e.g., backup_2024_01_15)
+- Recovery procedure: Copy backup files back to application directory
+
+## Infrastructure Management
+
+### Environment Setup
+
+- Python environment configuration via requirements.txt
+- Dependency installation: `pip install -r requirements.txt`
+- Application deployment: Copy files to target directory
+- No complex configuration management needed
+
+### Maintenance
+
+- Keep Python updated to supported version (3.8+)
+- Update package dependencies periodically: `pip install --upgrade -r requirements.txt`
+- Code maintenance and refactoring as needed for new features
+- Performance optimization based on user feedback and dataset sizes

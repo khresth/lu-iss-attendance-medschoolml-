@@ -2,84 +2,44 @@
 
 ## Overview
 
-Document the network architecture, security boundaries, and communication paths.
+Document the network architecture, security boundaries, and communication paths for the LU Medical School Attendance Tracker.
 
-## Network Architecture Diagram
+## Network Architecture
 
-Include a diagram showing network topology across environments.
+Since this is a localhost application, the network architecture is simplified:
 
-**Content should include:**
-- Virtual network layout with CIDR ranges
-- Subnet allocation (compute, data, private endpoints)
-- Internet-facing endpoints
-- Internal-only endpoints
-- Traffic flow paths
+- Localhost-only access (127.0.0.1)
+- Gradio default port 7860 (configurable)
+- No external network dependencies
+- Local file system access for CSV data
+- No internet-facing endpoints required
 
 ## DNS Configuration
 
-**Content should include:**
-- Public DNS records and domains
-- Private DNS zones for internal service resolution
-- How the orchestrator manages service discovery locally
-- DNS configuration per environment
+- No DNS configuration required
+- Localhost resolution handled by operating system
+- Application accessed via http://localhost:7860
+- No domain names or public DNS records needed
 
 ## TLS / HTTPS
 
-**Content should include:**
-- Certificate management (cloud-managed, Let's Encrypt, etc.)
-- TLS versions supported
-- HTTPS enforcement (redirect rules)
-- Certificate renewal process
+- No TLS/HTTPS required for localhost development
+- Gradio may provide HTTPS option for local development
+- No certificate management needed
+- HTTP protocol sufficient for local access
 
 ## CORS Policy
 
-**Content should include:**
-- Allowed origins per environment
-- Allowed methods and headers
-- Credentials policy
-- How CORS is configured in the API
-- Why specific origins are allowed (e.g., `localhost:[port]` for frontend dev server)
+- No CORS configuration required
+- Single-origin application (localhost)
+- No cross-origin requests
+- Gradio handles internal routing automatically
 
-## Firewall & Network Security
+## Security Considerations
 
-**Content should include:**
-- Network security group rules
-- IP restrictions (if any)
-- Private endpoint configuration
-- Service tags and application security groups
-- How database access is restricted
-
-## Traffic Flow
-
-### User -> Frontend
-
-**Content should include:**
-- How users access the frontend (CDN, App Service, etc.)
-- TLS termination point
-- Any WAF or DDoS protection
-
-### Frontend -> Backend
-
-**Content should include:**
-- API Gateway as entry point
-- How the gateway routes requests
-- Authentication header propagation
-- Request/response flow through middleware
-
-### Backend -> External Services
-
-**Content should include:**
-- Outbound connections to AI service
-- Outbound connections to identity provider (JWKS endpoints)
-- Outbound connections to configuration service and secrets manager
-- Private endpoint usage for cloud services
-
-## Security Hardening
-
-**Content should include:**
-- Security headers (CSP, HSTS, X-Frame-Options, etc.)
-- Rate limiting configuration
-- Input validation approach
-- SQL injection prevention (ORM parameterised queries)
-- XSS prevention measures
-- CSRF protection
+- Local file system access only
+- No external data transmission
+- CSV files contain sensitive student data - ensure proper file permissions
+- No authentication required (local application access)
+- Data privacy maintained through local deployment
+- Physical security of workstation is primary access control

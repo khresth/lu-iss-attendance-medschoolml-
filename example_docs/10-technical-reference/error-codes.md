@@ -1,100 +1,72 @@
-# Error Codes Reference
+# Error Handling Reference
 
 ## Overview
 
-Comprehensive reference for all error codes returned by the API, their meanings, and resolution guidance.
+Error handling in the LU Medical School Attendance Tracker is implemented through user-friendly messages displayed in the Gradio interface. Since this is a local application without an API, errors are shown directly to users in the web interface.
 
-## Error Response Format
+## Error Display Format
 
-All errors follow this envelope:
+Errors are displayed as text messages in the Gradio interface:
 
-```json
-{
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Human-readable description of what went wrong",
-    "details": {
-      // Optional additional context
-    }
-  },
-  "requestId": "unique-correlation-id"
-}
-```
+- Status text boxes show loading and processing messages
+- Error messages appear in the interface where the issue occurred
+- No error codes - plain English descriptions
 
-## HTTP Status Code Mapping
+## Common Error Messages
 
-| Status | Category | When Used |
-|--------|----------|-----------|
-| `400` | Bad Request | *Validation errors, malformed input* |
-| `401` | Unauthorised | *Missing or invalid authentication token* |
-| `403` | Forbidden | *Authenticated but lacks required permissions* |
-| `404` | Not Found | *Requested resource does not exist* |
-| `409` | Conflict | *Operation conflicts with current state* |
-| `413` | Payload Too Large | *File upload exceeds size limit* |
-| `422` | Unprocessable Entity | *Semantically invalid request* |
-| `429` | Too Many Requests | *Rate limit exceeded* |
-| `500` | Internal Server Error | *Unexpected server error* |
-| `502` | Bad Gateway | *Downstream service unavailable* |
-| `503` | Service Unavailable | *Service temporarily unavailable* |
+### File Loading Errors
 
-## Application Error Codes
+| Message | Cause | Resolution |
+|---------|-------|------------|
+| "File for [module] not provided." | Missing file upload | Upload the required CSV file |
+| "File for [module] not found." | File path issue | Check file exists and is readable |
+| "Error loading file: [details]" | File corruption or format issue | Re-export from ITPI dashboard |
+| "Missing 'studentId' column." | Invalid CSV format | Ensure CSV has correct column headers |
+| "Missing 'startDateTime' column." | Invalid CSV format | Ensure CSV has correct column headers |
+| "Missing required columns." | CSV missing required fields | Check CSV has all required columns |
+| "No valid data after cleaning." | All data filtered out | Check data quality and filters |
 
-### Authentication & Authorisation
+### Data Processing Errors
 
-| Code | HTTP Status | Description | Resolution |
-|------|------------|-------------|------------|
-| `AUTH_TOKEN_MISSING` | 401 | *No Bearer token provided* | *Include Authorization header* |
-| `AUTH_TOKEN_EXPIRED` | 401 | *JWT has expired* | *Refresh token and retry* |
-| `AUTH_TOKEN_INVALID` | 401 | *JWT signature or format is invalid* | *Re-authenticate* |
-| `AUTH_INSUFFICIENT_PERMISSIONS` | 403 | *User lacks required role or policy* | *Contact admin for access* |
-| `AUTH_USER_NOT_ALLOWED` | 403 | *User not in access control list* | *Contact admin for invitation* |
+| Message | Cause | Resolution |
+|---------|-------|------------|
+| "Module data not loaded." | Data not uploaded | Upload module CSV file first |
+| "Rotation data not loaded." | Rotation file missing | Upload rotation mapping file |
+| "No events in selected date range." | Date filter too narrow | Expand date range |
+| "Invalid date format." | Date parsing failed | Check CSV date format |
+| "Please select a module and valid date range." | Missing selection | Select module and dates |
+| "No placement data." | No placement events found | Check placement pattern matching |
 
-### Validation
+### Analysis Errors
 
-| Code | HTTP Status | Description | Resolution |
-|------|------------|-------------|------------|
-| `VALIDATION_REQUIRED_FIELD` | 400 | *A required field is missing* | *Check `details` for field name* |
-| `VALIDATION_INVALID_FORMAT` | 400 | *Field value has incorrect format* | *Check `details` for expected format* |
-| `VALIDATION_FILE_TOO_LARGE` | 413 | *Uploaded file exceeds size limit* | *Reduce file size* |
-| `VALIDATION_UNSUPPORTED_FORMAT` | 400 | *File type not supported* | *Use supported format* |
+| Message | Cause | Resolution |
+|---------|-------|------------|
+| "Select a student first." | No student selected | Select student from dropdown |
+| "Invalid student selection." | Student ID parsing failed | Try reselecting student |
+| "No data for student [id]." | Student not in dataset | Check student ID and data |
+| "Module not loaded." | Data not available | Load module data first |
+| "Graph not available for rotation data." | Feature limitation | Use attendance data for graphs |
 
-### Resource Errors
+### Notes File Errors
 
-| Code | HTTP Status | Description | Resolution |
-|------|------------|-------------|------------|
-| `RESOURCE_NOT_FOUND` | 404 | *Requested entity does not exist* | *Check ID is correct* |
-| `RESOURCE_ALREADY_EXISTS` | 409 | *Duplicate resource* | *Use existing resource or change identifier* |
-| `RESOURCE_STATE_CONFLICT` | 409 | *Operation not valid in current state* | *Check entity lifecycle state* |
+| Message | Cause | Resolution |
+|---------|-------|------------|
+| "Book1.xlsx not uploaded - notes will be empty." | Optional file missing | Upload Book1.xlsx for notes |
+| "Error loading Book1.xlsx: [details]" | Excel file issue | Check file format and encoding |
 
-### AI Service Errors
+## Troubleshooting Guide
 
-| Code | HTTP Status | Description | Resolution |
-|------|------------|-------------|------------|
-| `AI_SERVICE_UNAVAILABLE` | 503 | *AI service not reachable* | *Retry later* |
-| `AI_RATE_LIMITED` | 429 | *AI service rate limit exceeded* | *Wait and retry* |
-| `AI_PROCESSING_ERROR` | 500 | *AI returned an unexpected error* | *Retry; if persistent, contact support* |
-| `AI_RESPONSE_INVALID` | 500 | *AI response could not be parsed* | *Retry; if persistent, check prompt configuration* |
+### When Errors Occur
 
-### System Errors
+1. Check the error message in the interface
+2. Verify data files are properly formatted
+3. Ensure all required files are uploaded
+4. Check file permissions and encoding (UTF-8)
+5. Restart the application if issues persist
 
-| Code | HTTP Status | Description | Resolution |
-|------|------------|-------------|------------|
-| `INTERNAL_ERROR` | 500 | *Unexpected server error* | *Report with `requestId` for investigation* |
-| `DATABASE_ERROR` | 500 | *Database operation failed* | *Report with `requestId`* |
-| `EXTERNAL_SERVICE_ERROR` | 502 | *Downstream service returned an error* | *Retry; check dependency health* |
+### Prevention
 
-## Using `requestId` for Debugging
-
-**Content should include:**
-- Every error response includes a `requestId` (correlation ID)
-- How to use it to find related logs and traces
-- Where to search (error tracking, log analytics, orchestrator dashboard)
-- Include `requestId` when reporting issues to support
-
-## Client-Side Error Handling
-
-**Content should include:**
-- How the frontend handles each error category
-- Retry strategy for transient errors (429, 503)
-- User-facing error messages for each category
-- How to add handling for new error codes
+- Always export fresh data from ITPI dashboard
+- Verify CSV files open correctly in spreadsheet software
+- Use consistent file naming conventions
+- Keep backup copies of working data files

@@ -2,179 +2,120 @@
 
 ## Overview
 
-Quick reference for tasks developers perform regularly.
+Quick reference for tasks developers perform regularly with the LU Medical School Attendance Tracker.
 
-## Backend Tasks
+## Application Tasks
 
-### Run the Full Stack
-
-```bash
-[orchestrator run command]                # From repo root
-```
-
-### Build the Backend
+### Run the Application
 
 ```bash
-cd backend
-[build command]
+python app.py
 ```
-
-### Run Backend Unit Tests
-
-```bash
-cd backend
-[test command] [unit-test-project]
-```
-
-### Run Backend Integration Tests
-
-```bash
-cd backend
-[test command] [integration-test-project]
-```
-
-### Format Code
-
-```bash
-cd backend
-[formatter command]
-```
-
-### Create a Database Migration
-
-**Content should include:**
-```bash
-cd backend
-[migration add command] <MigrationName> \
-  --project [migrations-project] \
-  --startup-project [api-project]
-```
-- Naming conventions for migrations
-- How to verify the generated migration
-- How to apply: migrations run automatically on startup
-
-### Update the Database Manually
-
-```bash
-cd backend
-[database update command] --startup-project [api-project]
-```
-
-### Generate OpenAPI Spec
-
-**Content should include:**
-- How to access Swagger UI from running API
-- How to export the API spec
-- URL: `https://localhost:[port]/swagger`
-
-## Frontend Tasks
 
 ### Install Dependencies
 
 ```bash
-cd frontend
-npm install
+pip install -r requirements.txt
 ```
 
-### Start Frontend (Standalone)
+### Test Data Processing
 
-```bash
-cd frontend
-npm run dev
-```
+- Upload a CSV file through the Gradio interface
+- Check that data loads correctly and shows statistics
+- Verify that attendance charts generate properly
+- Test placement tracking functionality
 
-### Run Linting
+## Data Management Tasks
 
-```bash
-cd frontend
-npm run lint                        # Check only
-npm run lint:fix                    # Auto-fix
-```
+### Add New CSV Data Files
 
-### Run Formatting
+1. Export new attendance data from ITPI dashboard
+2. Place CSV files in project root directory
+3. Restart the application to load new data
+4. Verify data loads through the interface
 
-```bash
-cd frontend
-npm run format
-```
+### Validate CSV Format
 
-### Run Unit Tests
+- Required columns: studentId, firstName, surname, academicAdvisor, startDateTime
+- Optional columns: present, selfCertInfo, cancelled
+- Date format: ISO datetime format for startDateTime
+- Encoding: UTF-8 recommended
 
-```bash
-cd frontend
-npm run test
-```
+### Clean and Process Data
 
-### Run E2E Tests
+- Use the built-in data cleaning functions in app.py
+- Check for missing student IDs or invalid dates
+- Verify placement pattern matching works correctly
+- Review attendance percentage calculations
 
-```bash
-cd frontend
-npm run test:e2e
-```
+## Development Tasks
 
-### Regenerate API Client
+### Add New Chart Types
 
-**Content should include:**
-1. Ensure the backend API is running
-2. Copy the OpenAPI spec:
-   ```bash
-   curl https://localhost:[port]/swagger/v1/swagger.json -o frontend/openapi.yml
-   ```
-3. Generate the typed client:
-   ```bash
-   cd frontend
-   npm run generate-api
-   ```
-4. Check for breaking changes in the generated client file
+1. Modify the chart generation functions in app.py
+2. Add new Plotly chart type with appropriate data formatting
+3. Connect chart to Gradio interface component
+4. Test chart with sample data
+5. Verify interactive features work correctly
 
-## Git Workflows
+### Update Placement Patterns
 
-### Create a Feature Branch
+1. Modify PLACEMENT_PATTERNS regex in app.py
+2. Test pattern matching with placement data
+3. Update UI labels if needed
 
-**Content should include:**
-- Branch naming convention
-- Base branch (`[base-branch]`)
-- Example:
-  ```bash
-  git checkout [base-branch]
-  git pull
-  git checkout -b feature/<ticket-number>-<short-description>
-  ```
+### Add New Data Filters
 
-### Create a Pull Request
-
-**Content should include:**
-- PR title and description conventions
-- Required reviewers
-- CI checks that must pass
-- Link to work item
-
-### Resolve Merge Conflicts
-
-**Content should include:**
-- How to rebase on `[base-branch]`
-- Common conflict areas (migrations, package-lock, generated files)
-- When to regenerate vs manually resolve
+1. Add filter parameters to Gradio interface
+2. Implement filtering logic in data processing functions
+3. Update chart generation to use filtered data
+4. Test filter combinations
 
 ## Debugging
 
-### Attach Debugger to API
+### Debug Data Loading Issues
 
-**Content should include:**
-- How to launch API with debugger attached
-- How to set breakpoints
-- How to inspect request context
+- Check CSV file format and encoding
+- Verify required columns are present
+- Look for data type mismatches
+- Check console output for error messages
 
-### View Application Logs
+### Debug Chart Rendering
 
-**Content should include:**
-- Orchestrator dashboard: structured logs, traces, console output
-- Log file output location
-- How to change log levels
+- Verify Plotly installation and version
+- Check data format passed to chart functions
+- Look for JavaScript errors in browser console
+- Test with smaller datasets first
 
-### Inspect Database
+### Debug Performance Issues
 
-**Content should include:**
-- How to connect to local database (recommended tools)
-- Connection string for local database
-- Useful queries for debugging
+- Check CSV file sizes (large files may be slow)
+- Monitor memory usage during data processing
+- Consider data sampling for large datasets
+- Optimize Pandas operations if needed
+
+## Code Quality
+
+### Format Python Code
+
+```bash
+# Using black (if installed)
+black app.py
+
+# Using autopep8 (if installed)
+autopep8 --in-place --aggressive app.py
+```
+
+### Run Type Checking
+
+```bash
+# Using mypy (if installed)
+mypy app.py
+```
+
+### Test Application Functionality
+
+- Test with various CSV file formats
+- Verify all chart types render correctly
+- Check data aggregation accuracy
+- Test edge cases (empty files, missing data)

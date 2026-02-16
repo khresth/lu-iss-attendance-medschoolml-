@@ -2,99 +2,103 @@
 
 ## Overview
 
-Document the continuous integration and deployment pipeline architecture.
+Document the continuous integration and deployment pipeline architecture for the LU Medical School Attendance Tracker.
 
-## Pipeline Architecture Diagram
+## Pipeline Architecture
 
-Include a diagram showing the pipeline stages and their dependencies.
+Since this is a local application, the CI/CD pipeline is simplified:
 
-**Content should include:**
-- Source: [CI/CD Platform] repository
-- Trigger conditions (branch, PR, manual)
-- Pipeline stages and their order
-- Environments and approval gates
-- Artifact flow between stages
+- Source: Local Git repository
+- Manual deployment process
+- No automated pipeline infrastructure
+- Local testing and validation
+- Manual file distribution to users
 
-## Backend Pipeline (`pipeline/backend.yml`)
+## Development Pipeline
 
-### Trigger Configuration
+### Code Quality Checks
 
-**Content should include:**
-- Which branches trigger the pipeline
-- Path filters (only runs when backend files change)
-- PR validation rules
+- Manual code review process
+- Local testing with sample data
+- Python syntax validation
+- Import dependency checks
+- Code formatting standards
 
-### Build Stage
+### Testing Process
 
-**Content should include:**
-- SDK/runtime version used
-- Dependency restore with package feed configuration
-- Build command and configuration
-- Test execution — which test projects run
-- Build artifact publishing
+- Manual functional testing
+- CSV file format validation
+- Chart rendering verification
+- Data processing accuracy checks
+- Performance testing with large datasets
 
-### API Documentation Stage
+## Deployment Process
 
-**Content should include:**
-- OpenAPI spec generation
-- API collection generation (e.g., Postman)
-- Where artifacts are published
+### Manual Deployment Steps
 
-### Deployment Stage
+1. Code changes committed to Git repository
+2. Python environment setup on target machine
+3. Dependencies installed via requirements.txt
+4. Application files copied to target directory
+5. CSV data files placed in correct location
+6. Application tested with real data
 
-**Content should include:**
-- Target environments and deployment order
-- Deployment method (e.g., App Service deploy, container push)
-- Pre-deployment steps (database migrations)
-- Post-deployment validation (smoke tests, health checks)
-- Rollback triggers
+### Version Management
 
-## Frontend Pipeline (`pipeline/frontend.yml`)
+- Git tags for release versions
+- Branching strategy for features
+- Change log maintenance
+- Backup procedures for previous versions
+- Rollback process via file restoration
 
-### Trigger Configuration
+## Distribution Process
 
-**Content should include:**
-- Which branches trigger the pipeline
-- Path filters (only runs when frontend files change)
+### User Setup
 
-### Build & Test Stage
+- Python installation verification
+- Application file distribution
+- Configuration instructions
+- Data file preparation
+- User training and documentation
 
-**Content should include:**
-- Node.js version used
-- `npm install` with registry configuration
-- Lint validation
-- Unit test execution
-- Production build
-- Build artifact publishing
+### Update Process
 
-### Deployment Stage
+- Notification of updates
+- File replacement procedures
+- Data migration if needed
+- Testing verification
+- Support contact information
 
-**Content should include:**
-- Static file deployment target
-- CDN configuration and cache invalidation
-- Environment-specific build variables
+## Quality Assurance
 
-## Security Pipeline (`pipeline/security.yml`)
+### Pre-Deployment Checklist
 
-**Content should include:**
-- SAST scanning tools and configuration
-- Dependency vulnerability scanning
-- When it runs (PR, scheduled, etc.)
-- How findings are triaged and resolved
-- Blocking vs non-blocking rules
+- Code review completion
+- Testing with various CSV formats
+- Performance validation
+- Error handling verification
+- Documentation updates
 
-## Pipeline Variables & Secrets
+### Post-Deployment Validation
 
-**Content should include:**
-- Variable groups used
-- Service connections (cloud provider, package feeds, etc.)
-- How secrets are managed in pipelines
-- Per-environment variable overrides
+- Application startup verification
+- Data loading tests
+- Chart functionality checks
+- User acceptance testing
+- Issue tracking and resolution
 
-## Adding a New Pipeline
+## Backup and Recovery
 
-**Content should include:**
-- Step-by-step guide for creating a new pipeline
-- Template usage and conventions
-- Naming conventions
-- Required approvals for pipeline changes
+### Code Backup
+
+- Git repository maintenance
+- Version tagging strategy
+- Branch backup procedures
+- Remote repository synchronization
+
+### Data Backup
+
+- CSV file backup procedures
+- User notes backup
+- Configuration file backup
+- Recovery process documentation

@@ -2,75 +2,90 @@
 
 ## Overview
 
-Describe the authentication architecture at a high level — what it achieves and why it's designed this way.
+The LU Medical School Attendance Tracker uses a simplified authentication model appropriate for a local application.
 
-**Content should include:**
-- Identity provider model (single or multiple providers supporting distinct user populations)
-- [User Type A] users (e.g., internal/organizational users) via [Primary Auth Pool]
-- [User Type B] users (e.g., external users) via [Secondary Auth Pool] with social login
-- JWT-based authentication with Bearer tokens
-- Policy-based authorisation on the backend
+- No authentication required for local application access
+- Local machine access control provides security boundary
+- No external identity providers needed
+- No user accounts or session management
+- Access controlled through local file permissions
 
-## Authentication Flow Diagram
+## Access Control Model
 
-Include a sequence diagram showing the complete auth flow for each user type.
+### Local Application Access
 
-### [Primary Auth Flow]
+- Application runs on localhost only
+- Access controlled by operating system user permissions
+- No network-facing authentication required
+- Physical access to machine provides application access
 
-**Content should include:**
-- User clicks "Sign in with [Organization]"
-- Frontend configures [Auth SDK] for primary [Identity Provider] pool
-- Redirect to organization hosted UI
-- User authenticates with organizational credentials
-- Redirect back with authorization code
-- [Auth SDK] exchanges code for tokens
-- Frontend stores tokens in auth store
-- User completes onboarding (e.g., risk acknowledgement, terms acceptance)
-- Terms acceptance recorded via API call
-- Subsequent API calls include Bearer token
+### Data Access Control
 
-### [Secondary Auth Flow]
+- CSV file access controlled by file system permissions
+- Student data protected through local file security
+- No external data transmission
+- Data privacy maintained through local deployment
 
-**Content should include:**
-- User clicks "Sign in with [Social Provider]"
-- Frontend configures [Auth SDK] for secondary [Identity Provider] pool
-- Redirect to external hosted UI
-- User authenticates with social provider
-- Redirect back with authorization code
-- [Auth SDK] exchanges code for tokens
-- Frontend stores tokens in auth store
-- User completes onboarding (same flow as primary)
-- Terms acceptance recorded via API call
+## Security Architecture
 
-## User Identity Resolution
+### Application Security
 
-**Content should include:**
-- How `UserContextMiddleware` determines user source from JWT issuer claim
-- Claim mapping: which claims identify users from each provider
-- Group extraction from group claims
-- How user context is propagated through the request pipeline
+- No external attack surface
+- Localhost-only access (127.0.0.1)
+- No authentication bypass vulnerabilities
+- Secure coding practices for data handling
 
-## Authorisation Policies
+### Data Protection
 
-**Content should include:**
-- List of authorisation policies (e.g., "anyUser", "adminOnly")
-- What each policy requires
-- How policies are applied to endpoint groups
-- Role-based access considerations (admin, standard user)
+- Student data never leaves local machine
+- No external API calls or data transmission
+- CSV files stored locally with appropriate permissions
+- No database or external storage services
 
-## External User Access Control
+## User Management
 
-**Content should include:**
-- Whitelist/allowlist mechanism for external users
-- How administrators invite external users
-- [Identity Provider] user creation for invited users
-- Lifecycle: invitation -> account creation -> first sign-in
+### No User Accounts
 
-## Security Considerations
+- No user registration or login required
+- No user profiles or preferences stored
+- No session management needed
+- No password management
 
-**Content should include:**
-- Token expiry and refresh strategy
-- CORS configuration and allowed origins
-- HTTPS enforcement
-- OWASP considerations addressed
-- PII handling in tokens and logs
+### Access Control
+
+- Access controlled through local machine security
+- File permissions control data access
+- No role-based access control needed
+- Administrative access through OS-level permissions
+
+## Compliance Considerations
+
+### Data Privacy
+
+- Student data remains on local machines
+- No external data processing or storage
+- Compliance with local data protection regulations
+- No third-party data sharing
+
+### Audit Trail
+
+- No user activity logging required
+- File system access logging available through OS
+- Application usage tracked at local level
+- No central audit trail needed
+
+## Security Best Practices
+
+### Local Security
+
+- Ensure proper file permissions on CSV data
+- Regular security updates for operating system
+- Secure Python environment configuration
+- Backup procedures for data protection
+
+### Development Security
+
+- Secure coding practices for data handling
+- Input validation for CSV file processing
+- Error handling that doesn't expose sensitive information
+- Regular code reviews for security issues

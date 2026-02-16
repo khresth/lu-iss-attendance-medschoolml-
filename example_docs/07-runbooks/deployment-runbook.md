@@ -2,91 +2,170 @@
 
 ## Overview
 
-Step-by-step procedures for deploying changes to each environment.
+Step-by-step procedures for deploying changes to LU Medical School Attendance Tracker.
 
 ## Pre-Deployment Checklist
 
-**Content should include:**
-- [ ] All CI checks passing on the branch/PR
-- [ ] Code review approved
-- [ ] Database migrations reviewed (if any)
-- [ ] Feature flags configured for the target environment
-- [ ] No conflicting deployments in progress
-- [ ] Stakeholders notified (if major change)
+- [ ] Python environment tested and working
+- [ ] All required packages installed (Gradio, Pandas, Plotly)
+- [ ] Code changes tested locally
+- [ ] CSV data files validated
+- [ ] Documentation updated if needed
+- [ ] Backup of current version created
 
-## Standard Deployment (CI/CD)
+## Manual Deployment Process
 
-### Deploy to Staging
+### Deploy to Local Machine
 
-**Content should include:**
-- Trigger: merge PR to `[base-branch]`
-- Pipeline automatically runs:
-  1. Build and test
-  2. Publish artifacts
-  3. Deploy to staging environment
-  4. Run smoke tests
-- How to verify deployment succeeded
-- How to monitor for issues after deployment
+1. Stop current application if running (Ctrl+C in terminal)
+2. Backup current app.py file (copy to app.py.backup)
+3. Copy new version to target directory
+4. Update requirements.txt if dependencies changed
+5. Test new version with sample data
+6. Verify all functionality works correctly
 
-### Deploy to Production
+### Update Dependencies
 
-**Content should include:**
-- Trigger: manual approval after staging validation
-- Pre-production checklist:
-  - [ ] Staging has been tested by QA / product
-  - [ ] No new errors in error tracking on staging
-  - [ ] Performance metrics stable on staging
-  - [ ] Approval granted by *(role)*
-- Deployment steps
-- Post-deployment verification
-- Monitoring period (how long to watch before considering complete)
+1. Check requirements.txt for new packages
+2. Run `pip install -r requirements.txt`
+3. Verify all packages install correctly
+4. Test import of new dependencies in Python
+5. Update virtual environment if used
 
-## Database Migration Deployment
+## Data Deployment
 
-**Content should include:**
-- Migrations run automatically via migration service on startup
-- For destructive migrations (column removal, table drops):
-  - Deploy schema change in release N (add new columns, stop writing old)
-  - Deploy code change in release N+1 (start using new schema)
-  - Deploy cleanup in release N+2 (remove old columns)
-- How to verify migrations applied successfully
-- Rollback considerations (migrations are generally forward-only)
+### Update CSV Data Files
+
+1. Export new data from ITPI dashboard
+2. Validate CSV file format and content
+3. Backup existing CSV files
+4. Replace with new data files
+5. Test data loading in application
+6. Verify charts and statistics work correctly
+
+### Update Placement Mapping
+
+1. Export new placement data from ITPI
+2. Validate placement mapping format
+3. Backup existing placement files
+4. Update y*r1.csv files
+5. Test placement pattern matching
+6. Verify placement data displays correctly
 
 ## Rollback Procedure
 
-**Content should include:**
-- When to rollback vs forward-fix
-- How to rollback a deployment:
-  1. Navigate to CI/CD pipeline
-  2. Find the last known good release
-  3. Re-deploy that artifact
-  4. Verify health checks pass
-- Database rollback considerations (usually not possible — prefer forward-fix)
-- How to rollback a feature flag change
+**When to rollback vs forward-fix:**
+- Rollback if new version crashes or has critical bugs
+- Forward-fix if issue is minor and can be quickly fixed
 
-## Hotfix Deployment
+**How to rollback application:**
+1. Restore backup of app.py from backup copy
+2. Restart application: `python app.py`
+3. Verify functionality works with test data
 
-**Content should include:**
-- When to use a hotfix (SEV-1 or SEV-2 in production)
-- Branching strategy for hotfixes
-- Expedited review process
-- Direct-to-production deployment (if justified)
-- Post-hotfix: backport to `[base-branch]`
+**How to rollback data:**
+1. Restore backup CSV files from dated backup folder
+2. Test data loading in application
+3. Verify charts work correctly
+
+**Document:**
+- Reason for rollback
+- Version rolled back from/to
+- Any data issues encountered
+
+## Testing After Deployment
+
+### Functional Testing
+
+- Test application startup: `python app.py`
+- Verify CSV file loading through interface
+- Test chart generation with sample data
+- Check interface responsiveness
+- Validate data processing accuracy
+- Test chart generation
+- Check interface responsiveness
+- Validate data processing accuracy
+
+### Data Validation
+
+- Test with various CSV file formats (different years, semesters)
+- Verify data cleaning works correctly (date parsing, type conversion)
+- Check attendance calculations against known values
+- Validate placement pattern matching with test descriptions
+- Test error handling for invalid data (missing columns, bad formats)
+
+## Performance Testing
+
+- Test with typical dataset sizes (1,000 - 10,000 rows)
+- Monitor memory usage during processing (should stay under 500MB)
+- Check chart rendering performance (should complete in < 5 seconds)
+- Verify interface responsiveness during data loading
+- Document performance benchmarks for reference
+
+## Documentation Updates
+
+- Update user documentation (user-guide.md) for new features
+- Update technical documentation for any code changes
+- Update README.md if installation or setup changed
+- Document any new configuration options or file formats
+- Update troubleshooting guides with new common issues
+
+## Communication Procedures
+
+- Notify users of upcoming changes via email or Teams
+- Document deployment schedule in shared calendar
+- Provide training for new features if significant changes
+- Share updated documentation links with users
+- Collect feedback after deployment for future improvements
 
 ## Emergency Procedures
 
-### Restart a Service
+### Quick Fix Deployment
 
-**Content should include:**
-- How to restart via cloud portal
-- How to restart via CLI
-- Expected downtime during restart
-- How to verify service recovery
+**When to use quick fixes:**
+- Critical bugs affecting all users
+- Data processing errors giving wrong results
+- Application crashes on startup
 
-### Scale Up/Out
+**How to deploy urgent changes:**
+1. Make minimal fix to address the issue
+2. Test fix locally with sample data
+3. Deploy immediately to users
+4. Document the change made
 
-**Content should include:**
-- How to scale resources via cloud portal
-- Auto-scaling configuration (if enabled)
-- Cost implications of scaling
-- When to scale back down
+**Testing requirements:**
+- At minimum, test that the fix resolves the issue
+- Test that no new issues are introduced
+- Full testing can happen after deployment
+
+**Documentation:**
+- Update changelog with quick fix details
+- Note any temporary workarounds
+
+**Follow-up:**
+- Schedule proper testing when time allows
+- Consider more robust fix in next release
+
+### Application Restart
+
+**How to restart:**
+1. Stop application: Press Ctrl+C in terminal running app.py
+2. Wait for process to terminate
+3. Start application: `python app.py`
+4. Wait for "Running on http://localhost:7860" message
+
+**Expected downtime:**
+- 5-10 seconds for restart
+- Users will see connection error during restart
+- Data files don't need to be reloaded if unchanged
+
+**Verification:**
+- Check terminal shows no errors
+- Open browser to http://localhost:7860
+- Test file upload and chart generation
+- Verify data processing works correctly
+
+**Data integrity:**
+- CSV files are not affected by restart
+- Any in-memory data will need to be reloaded
+- User uploaded files will need to be re-uploaded

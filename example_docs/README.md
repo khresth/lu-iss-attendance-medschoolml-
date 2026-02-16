@@ -1,6 +1,6 @@
 # Example Documentation
 
-This documentation set provides a comprehensive reference for the reference application — a full-stack application built with x, y and z
+This documentation set provides a comprehensive reference for the LU Medical School Attendance Tracker — a full-stack application built with Python, Gradio, and Plotly
 
 ## Documentation Structure
 

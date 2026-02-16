@@ -2,69 +2,58 @@
 
 ## Purpose
 
-Describe the overall system at a high level — what it does, who it serves, and why it exists.
+The LU Medical School Attendance Tracker is a data analysis and visualization tool designed to help medical school staff monitor and analyze student attendance patterns across different academic years and rotation placements.
 
-**Content should include:**
-- Product mission statement and business context
-- Target user groups (e.g., internal users, external users, administrators)
-- High-level capabilities (e.g., [Feature A], [Feature B], [Feature C])
-- Current phase and planned roadmap
+- **Product mission:** Provide medical school staff with comprehensive attendance analytics and placement tracking capabilities
+- **Target user groups:** Medical school staff, academic advisors, administrators
+- **High-level capabilities:** Attendance percentage tracking, placement monitoring, trend visualization over time
+- **Current phase:** Operational attendance tracking system with data import from ITPI dashboard
 
 ## System Context Diagram
 
-Include a C4 Level 1 (System Context) diagram showing [Project Name] and its external dependencies.
+Include a C4 Level 1 (System Context) diagram showing LU Medical School Attendance Tracker and its external dependencies.
 
-**Content should include:**
-- Diagram showing the system boundary
-- External actors: [User Type A], [User Type B], Administrators
-- External systems: [Identity Provider], [AI Service], [Configuration Service], [Secrets Manager]
-- Direction of data flow between each actor/system and [Project Name]
+- **System boundary:** The application runs locally on user workstations
+- **External actors:** Medical School Staff, Academic Advisors, System Administrators
+- **External systems:** ITPI Attendance Dashboard (data source), Local File System (CSV storage)
+- **Data flow:** Staff export data from ITPI → Load into application → Analyze locally → View results
 
 ## High-Level Architecture Diagram
 
 Include a C4 Level 2 (Container) diagram showing the major components.
 
-**Content should include:**
-- [Orchestrator] (orchestration layer)
-- [API Gateway] (reverse proxy)
-- Backend API
-- AI Service layer
-- Database
-- Frontend application
-- Mock Server (development only)
-- Background job processor
-- Relationships and data flow between each container
+- **Gradio Web Interface** (user interaction layer)
+- **Data Processing Engine** (Pandas-based data manipulation)
+- **Visualization Engine** (Plotly-based charting)
+- **CSV Data Sources** (attendance and placement data)
+- **Local File System** (data storage)
+- **Single-process data flow:** File upload → Data cleaning → Analysis → Display
 
 ## Technology Stack Summary
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | *List framework, UI library, state management, data fetching, etc.* |
-| Backend | *List runtime, framework, ORM, background jobs, etc.* |
-| AI | *List AI SDK, model provider, prompt management approach* |
-| Database | *List RDBMS, migration tool* |
-| Infrastructure | *List cloud provider, IaC tool, orchestration, observability* |
-| Auth | *List identity provider, token format, auth libraries* |
+| Frontend | Gradio web interface, Plotly for data visualization |
+| Backend | Python 3.x, Pandas for data processing, Plotly for charts |
+| Database | CSV files (imported from ITPI dashboard) |
+| Infrastructure | Localhost deployment, Python environment required |
+| Auth | None (local application access) |
 
 ## Key Architectural Decisions
 
-Link to or summarise the most important architectural decisions (consider using ADR format).
-
-**Decisions to document:**
-- Choice of orchestration approach (e.g., .NET Aspire, Docker Compose, Kubernetes)
-- Choice of frontend framework and why
-- Choice of API gateway / reverse proxy
-- Identity provider architecture (single vs multiple pools)
-- AI orchestration SDK selection
-- Background job processing approach
-- UI component library selection
+**Decisions documented:**
+- Choice of Gradio for rapid web interface development
+- Use of CSV files as primary data source from ITPI dashboard
+- Pandas for data manipulation and analysis
+- Plotly for interactive data visualization
+- Local deployment model for medical school internal use
+- No authentication layer (local application access)
 
 ## Non-Functional Requirements
 
-**Content should include:**
-- Performance targets (response times, throughput)
-- Availability targets (uptime SLA)
-- Scalability approach
-- Security requirements and compliance considerations
-- Data retention policies
-- Accessibility standards (WCAG level)
+- **Performance targets:** Responsive UI for datasets up to 10,000 records (charts render in <5 seconds)
+- **Availability targets:** Local application availability during working hours (9am-5pm, weekdays)
+- **Scalability approach:** Memory-based processing suitable for medical school scale (50-500 students per year)
+- **Security requirements:** Local file system access only, no external data transmission
+- **Data retention policies:** As per ITPI dashboard data retention (managed by source system)
+- **Accessibility standards:** Basic web accessibility through Gradio interface (keyboard navigation, screen reader compatible)

@@ -2,65 +2,54 @@
 
 ## Overview
 
-Document the accessibility commitment, current compliance status, and how users can get help.
+The LU Medical School Attendance Tracker is built using Gradio, which provides basic web accessibility features. This document outlines the current accessibility status and limitations.
 
 ## Our Commitment
 
-**Content should include:**
-- Commitment to making [Project Name] accessible to all users
-- WCAG version and conformance level targeted (e.g., WCAG 2.1 AA)
-- Legal/regulatory context (e.g., [applicable accessibility regulations])
+We aim to make the attendance tracker accessible to all medical school staff. The application uses Gradio's built-in accessibility features, including semantic HTML and ARIA labels where supported.
 
-## Current Compliance Status
+## Current Accessibility Features
 
-**Content should include:**
-- Overall compliance assessment (fully compliant, partially compliant, non-compliant)
-- Date of last accessibility audit
-- Who conducted the audit (internal, external firm)
-- Summary of findings
+### Supported Features
 
-## Known Accessibility Features
+- Keyboard navigation for interactive elements
+- Form labels on input fields
+- Semantic HTML structure
+- Focus indicators on interactive elements
+- Text-based status messages
 
-**Content should include:**
-- Keyboard navigation support
-- Screen reader compatibility
-- Colour contrast ratios
-- Text resizing support
-- Focus management
-- Alternative text for images
-- Form labels and error messages
-- Skip navigation links
+### Browser and Assistive Technology Support
 
-## Known Issues
+- Modern browsers (Chrome, Firefox, Edge, Safari)
+- Basic screen reader compatibility through Gradio
+- Keyboard-only operation possible
+- No mobile app - web browser only
 
-**Content should include:**
+## Known Limitations
 
-| Issue | Impact | Affected Users | Planned Fix |
-|-------|--------|---------------|-------------|
-| *Description of issue* | *WCAG criterion affected* | *Who is impacted* | *When it will be fixed* |
-
-- Transparent list of known accessibility gaps
-- Workarounds where available
-- Timeline for fixes
-
-## Assistive Technology Compatibility
-
-**Content should include:**
-- Tested screen readers (NVDA, JAWS, VoiceOver)
-- Tested browsers and AT combinations
-- Known incompatibilities
+| Issue | Impact | Workaround |
+|-------|--------|------------|
+| Complex data tables | Screen readers may have difficulty with large HTML tables | Use browser zoom, copy data to spreadsheet |
+| Charts and graphs | Visual information may not be fully accessible to screen readers | Data available in tabular form alongside charts |
+| Color-coded data | Some information conveyed through color alone | Check table data for actual values |
+| Interactive plots | Plotly charts have limited keyboard navigation | Use alternative data views in tables |
 
 ## Getting Help
 
-**Content should include:**
-- How to request content in an alternative format
-- How to report an accessibility issue
-- Contact information for accessibility support
-- Expected response time
+### Chart Accessibility
+
+- Chart descriptions and titles
+- Color contrast in visualizations
+- Alternative text for data representations
+- Request data in alternative formats if needed
+- Report accessibility issues for future improvements
 
 ## Feedback
 
-**Content should include:**
-- How to provide feedback on accessibility
-- How feedback is used to improve the service
-- Escalation path if feedback is not addressed
+### Compliance Status
+
+- Meets basic web accessibility standards
+- Gradio framework provides accessible components
+- Ongoing improvements based on feedback
+- Accessibility feedback welcome via IT department
+- Used to prioritize improvements in future releases

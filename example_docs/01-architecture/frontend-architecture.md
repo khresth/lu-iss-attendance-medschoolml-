@@ -2,99 +2,58 @@
 
 ## Overview
 
-Describe the frontend application, its target platforms, and how it fits into the system.
+Describe the LU Medical School Attendance Tracker frontend application, its target platforms, and how it fits into the system.
 
-**Content should include:**
-- Frontend framework and runtime (e.g., React, Vue, Expo, Next.js)
-- Target platforms (web, native mobile, both)
-- How it's served in development vs production
-- Communicates with backend exclusively through the API Gateway
+- Frontend framework and runtime: Gradio web interface framework
+- Target platforms: Web browser (no mobile or native apps)
+- How it's served: Local Python web server (localhost)
+- Communicates with data processing through direct function calls
 
 ## Technology Choices
 
 | Concern | Technology | Notes |
 |---------|-----------|-------|
-| Framework | *[Frontend Framework]* | *Why chosen* |
-| UI Library | *[UI Library]* | *Design token system, component primitives* |
-| Routing | *[Navigation Library]* | *Typed routes, deep linking support* |
-| Server State | *[Data Fetching Library]* | *Typed API client, caching, background refetching* |
-| Client State | *[State Management Library]* | *Lightweight, persistence middleware* |
-| Auth | *[Auth SDK]* | *OAuth redirect handling, token management* |
-| Testing | *[Frontend Test Framework], [E2E Test Framework]* | *Unit and E2E* |
-| Error Tracking | *[Error Tracking Service]* | *Crash reporting, performance monitoring* |
+| Framework | Gradio | Python-based web framework for rapid UI development |
+| UI Components | Gradio Components | Built-in components for file upload, charts, data display |
+| Data Visualization | Plotly | Interactive charting library integrated with Gradio |
+| State Management | In-memory | No persistent state management needed |
+| Data Fetching | Direct function calls | No API calls, direct data processing |
 
 ## Directory Structure
 
-Explain the `src/` directory layout and the purpose of each folder.
+Since this is a single-file application, there's no traditional frontend directory structure.
 
-**Content should include:**
-
-```
-src/
-├── components/       # Reusable UI components
-│   ├── ui/           # Design system primitives (atoms, molecules)
-│   └── features/     # Feature-specific compound components
-├── features/         # Feature modules
-├── screens/          # Screen-level components (one per route)
-├── navigation/       # Navigation/routing configuration and typed routes
-├── hooks/            # Custom React hooks (shared logic)
-├── state/            # State management stores (auth, onboarding)
-├── data/             # Data fetching hooks for API calls
-├── lib/              # Utilities (apiClient, analytics, auth helpers)
-└── types/            # TypeScript type definitions
-```
-
-- Explanation of when to add code to each folder
-- Naming conventions for files and components
+- All frontend code is contained within `app.py`
+- Gradio interface defined programmatically
+- No separate `src/` directory structure
+- Components created through Gradio function calls
+- No build process or bundling required
 
 ## Component Architecture
 
-Describe the component hierarchy and design patterns.
+Describe the Gradio component organization and design patterns.
 
-**Content should include:**
-- Atomic design approach: atoms -> molecules -> organisms -> screens
-- UI library primitive usage
-- Theme system and design tokens
-- Responsive design approach
-- How feature components compose shared UI components
+- Gradio Blocks-based layout structure
+- Component hierarchy: File uploads → Controls → Output displays
+- Tab-based organization for different analysis views
+- Input components: File, Dropdown, Textbox, Slider, Checkbox
+- Output components: Plot, HTML, Textbox
 
 ## Data Flow
 
-Document how data moves through the frontend.
+Document how data moves through the interface.
 
-**Content should include:**
-- API client generation from OpenAPI spec
-- Data fetching hooks for server state (queries and mutations)
-- State management stores for client-only state
-- Data flow diagram: API -> Cache -> Component -> User interaction -> Mutation -> API
-- Success/Error response envelope pattern used in data hooks
-- Optimistic updates (if used)
+- Direct function calls from Gradio events to Python functions
+- Data transformation from CSV to DataFrame to visualization
+- Synchronous updates based on user interactions
+- State managed through Gradio component values and global variables
+- No client-side state management needed
 
-## Routing & Navigation
+## User Interface Structure
 
-**Content should include:**
-- Navigation/routing configuration
-- Typed route definitions and how to add new routes
-- Auth-gated routing — how unauthenticated users are redirected
-- Deep linking configuration
-- Navigation patterns (push, replace, reset)
-
-## Authentication Flow (Frontend)
-
-Provide the frontend perspective on auth (backend perspective in [02-authentication](../02-authentication/)).
-
-**Content should include:**
-- Auth gate component — onboarding flow (e.g., Welcome -> Terms -> Consent)
-- [Auth SDK] OAuth configuration
-- Provider selection stored in session/local storage
-- Token storage in auth store
-- Automatic token refresh on 401 responses
-- Sign-out flow and state cleanup
-
-## State Management
-
-**Content should include:**
-- Auth store: what it persists, how tokens are managed
-- Onboarding store: tracking first-time user experience
-- When to use which state mechanism (server state library vs client state library vs local component state)
-- Persistence strategy
+- Header section with title and instructions
+- File upload section (Book1.xlsx, rotation files, attendance CSVs)
+- Module selection and date range controls
+- Analysis parameters (thresholds, sorting options)
+- Tabbed output display (Summary, Student Details, Placement Analysis, Macro View)
+- Real-time updates based on user selections

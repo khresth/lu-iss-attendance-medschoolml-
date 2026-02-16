@@ -2,84 +2,71 @@
 
 ## Overview
 
-Document the identity provider setup for all user pools.
+The LU Medical School Attendance Tracker does not use external identity providers due to its local application nature.
 
-## Primary Auth Pool ([Organization])
+## No Identity Provider Required
 
-### Pool Configuration
+### Local Application Model
 
-**Content should include:**
-- Pool IDs per environment:
-  - Staging: `[pool-id-staging]`
-  - Production: `[pool-id-production]`
-- Region: `[region]`
-- Hosted UI domains per environment
-- App client IDs per environment
-- Supported OAuth scopes: `openid`, `email`, `profile`
-- Callback URLs per environment
-- Sign-out URLs per environment
+- No external identity providers needed
+- No user pools or authentication services
+- Local machine access provides security
+- No OAuth or SAML configuration required
+- No user account management
 
-### Custom Claims
+### Security Model
 
-**Content should include:**
-- `[primary-id-claim]` — primary user identifier (custom claim)
-- `[groups-claim]` — group memberships
-- `email` — user email address
-- Any other custom attributes
+- Access controlled by operating system
+- File permissions protect data
+- No network authentication needed
+- Localhost-only access (127.0.0.1)
+- Physical security of machine provides access control
 
-### Federation
+## Alternative Authentication Approaches
 
-**Content should include:**
-- How organizational SSO federates into this pool
-- SAML or OIDC configuration details
-- Attribute mapping from organizational IdP to identity provider
+### Optional Future Enhancements
 
-## Secondary Auth Pool (External)
+- Potential for simple username/password if needed
+- Local configuration file for user preferences
+- Optional session persistence
+- Basic access logging if required
 
-### Pool Configuration
+### Implementation Considerations
 
-**Content should include:**
-- Pool IDs per environment:
-  - Staging: `[pool-id-staging]`
-  - Production: `[pool-id-production]`
-- Region: `[region]`
-- Hosted UI domains per environment
-- App client IDs per environment
-- Supported OAuth scopes
-- Callback URLs per environment
+- Keep authentication simple if added
+- Avoid external dependencies
+- Maintain local deployment model
+- Consider data privacy implications
+- Ensure compliance with medical school policies
 
-### Social Identity Providers
+## Configuration Management
 
-**Content should include:**
-- Google OAuth configuration
-- Apple Sign-In configuration
-- How social provider attributes map to identity provider attributes
-- `sub` claim used as user identifier
+### Application Configuration
 
-### User Management
+- Configuration via environment variables
+- Local configuration files
+- No external configuration services
+- Settings stored locally
 
-**Content should include:**
-- How administrators create external user accounts
-- Access control table — fields and lifecycle
-- Invitation flow: admin adds email -> account created -> email sent -> user signs in
-- Account deletion and deprovisioning
+### Data Access Configuration
 
-## Backend JWT Validation
+- CSV file path configuration
+- File permission settings
+- Local backup configuration
+- Data retention policies
 
-**Content should include:**
-- How the backend framework validates tokens from all pools
-- JWKS endpoint configuration
-- Issuer validation for multi-pool support
-- Clock skew tolerance
-- Configuration keys:
-  - `[Auth]:Authority`, `[Auth]:ClientId` (primary pool)
-  - `[ProjectName].ExternalAuth:Authority`, `[ProjectName].ExternalAuth:ClientId` (secondary pool)
+## Security Configuration
 
-## Frontend Auth SDK Configuration
+### Local Security Settings
 
-**Content should include:**
-- Dynamic auth configuration switching between pools
-- `configureForPrimary()` and `configureForSecondary()` functions
-- How the selected provider is persisted across OAuth redirects (sessionStorage)
-- OAuth redirect URI resolution at runtime
-- Configuration values per environment
+- File system permissions for CSV data access
+- Python environment security (virtual environments)
+- Local firewall configuration (if network access needed)
+- Antivirus and malware protection
+
+### Development Security
+
+- Secure coding practices for data handling
+- Input validation for CSV file processing
+- Error handling without exposing sensitive data
+- Code review processes for changes

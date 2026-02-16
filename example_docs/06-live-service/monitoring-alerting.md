@@ -2,95 +2,93 @@
 
 ## Overview
 
-Document what is monitored, how alerts are configured, and where to look when something goes wrong.
+The LU Medical School Attendance Tracker is a local application with manual monitoring. Since it runs on individual workstations, there is no centralized monitoring or alerting infrastructure.
 
-## Monitoring Stack
+## Monitoring Approach
 
-**Content should include:**
-- OpenTelemetry for traces, metrics, and logs
-- Cloud-native monitoring service (e.g., Application Insights, CloudWatch)
-- Error tracking service for error tracking and performance monitoring
-- Orchestrator Dashboard for local development monitoring
-- Background job dashboard for job monitoring
+### Local Application Monitoring
 
-## Dashboards
+| Aspect | How to Monitor | Indicator |
+|--------|----------------|-----------|
+| Application Status | Terminal window | Python process running |
+| Data Loading | Gradio interface status box | "Loaded X rows" messages |
+| File Access | Error messages in UI | "File not found" errors |
+| Performance | User experience | Response time for operations |
+| Memory Usage | System task manager | Python memory consumption |
 
-### Application Health Dashboard
+## Manual Health Checks
 
-**Content should include:**
-- Where to find it (cloud portal, Grafana, etc.)
-- Key widgets:
-  - Request rate and latency (p50, p95, p99)
-  - Error rate (4xx, 5xx)
-  - Active users
-  - Database connection pool utilisation
-  - Background job queue depth
+### Daily Usage Verification
 
-### Infrastructure Dashboard
+**Check:**
+1. Application starts without errors
+2. CSV files load successfully
+3. Charts render correctly
+4. Interface is responsive
 
-**Content should include:**
-- CPU and memory utilisation
-- Database resource usage
-- Storage consumption
-- Network throughput
-- Application instance count
+### Weekly Maintenance
 
-### AI Service Dashboard
+**Check:**
+1. Review any error messages from the week
+2. Verify data files are current
+3. Check for any performance issues
+4. Update data from ITPI dashboard if needed
 
-**Content should include:**
-- AI service request rate and latency
-- Token usage and cost
-- Rate limiting / throttling events
-- Model error rates
+## Troubleshooting Indicators
 
-## Alert Configuration
+### Warning Signs
 
-### Critical Alerts (Page Immediately)
+| Sign | Meaning | Action |
+|------|---------|--------|
+| Slow chart rendering | Large dataset or memory pressure | Reduce date range, close other apps |
+| File loading errors | CSV format issues | Re-export from ITPI dashboard |
+| Application crashes | Insufficient resources | Free up memory, restart application |
+| Interface unresponsive | Browser or Gradio issue | Refresh browser, restart app |
 
-**Content should include:**
+### Common Issues and Solutions
 
-| Alert | Condition | Action |
-|-------|-----------|--------|
-| Service Down | *Health check fails for > 2 minutes* | *Page on-call, follow [Incident Response](../07-runbooks/incident-response.md)* |
-| Error Rate Spike | *5xx rate > 5% for 5 minutes* | *Page on-call, check logs* |
-| Database Unreachable | *Connection failures > 0 for 3 minutes* | *Page on-call, check database service* |
+**Slow Performance:**
+- Check dataset size
+- Monitor system memory usage
+- Close unnecessary applications
+- Use smaller date ranges for analysis
 
-### Warning Alerts (Investigate During Business Hours)
+**File Loading Failures:**
+- Verify CSV file encoding (UTF-8)
+- Check required columns are present
+- Ensure files are in correct directory
+- Re-export data from ITPI if corrupted
 
-**Content should include:**
+**Chart Display Issues:**
+- Verify Plotly is properly installed
+- Check browser console for JavaScript errors
+- Try different browser if issues persist
+- Ensure data loaded correctly
 
-| Alert | Condition | Action |
-|-------|-----------|--------|
-| High Latency | *p95 > 2s for 10 minutes* | *Investigate slow queries, AI latency* |
-| High CPU | *CPU > 80% for 15 minutes* | *Check for resource contention, consider scaling* |
-| Background Job Failures | *Failed jobs > 5 in 1 hour* | *Check job dashboard, review logs* |
-| Certificate Expiry | *TLS cert expires within 30 days* | *Renew certificate* |
+## No Automated Alerting
 
-### Informational Alerts
+**Important:** This application does not have:
+- Automated alerting systems
+- Paging/on-call procedures
+- Service level monitoring
+- Error rate tracking
+- Performance dashboards
 
-**Content should include:**
-- Deployment completed notifications
-- Scheduled maintenance reminders
-- Capacity planning thresholds
+All monitoring is manual through the Gradio interface and terminal output.
 
-## Log Access
+## User Feedback
 
-**Content should include:**
-- How to query structured logs
-- Common useful queries:
-  - Find all errors in the last hour
-  - Trace a specific request by correlation ID
-  - Find slow database queries
-  - Find AI service errors
-- Log retention periods
-- How to export logs for investigation
+### Reporting Issues
 
-## Error Tracking Configuration
+Users should report issues to:
+- **IT Department**: Technical problems, bugs
+- **Medical School Admin**: Data quality issues, feature requests
 
-**Content should include:**
-- Project setup (backend and frontend projects)
-- Environment tagging (staging, production)
-- Release tracking
-- Alert rules configured
-- PII scrubbing rules
-- How to triage and resolve issues
+### Information to Include
+
+When reporting issues:
+1. What operation were you performing
+2. What error message appeared (if any)
+3. Size of data file being processed
+4. Browser and operating system
+5. Any terminal error messages

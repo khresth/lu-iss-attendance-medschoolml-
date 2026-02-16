@@ -2,111 +2,140 @@
 
 ## Overview
 
-How to write and run E2E tests that exercise the full application stack.
+How to write and run E2E tests that exercise the full LU Medical School Attendance Tracker application stack.
 
 ## Prerequisites
 
-**Content should include:**
-- Full stack running via the orchestrator
-- E2E test browsers installed: `npx playwright install` (or equivalent)
-- Test user accounts available
-- Configuration for test environment URLs
+- Python application running locally
+- Web browser for interface testing (Chrome, Firefox, Edge, Safari)
+- Test CSV files prepared with various scenarios
+- Test environment matching user setup (same OS, Python version)
+- Manual testing procedures documented
 
 ## Running E2E Tests
 
+Since this is a local application, E2E testing is primarily manual:
+
 ```bash
-# All E2E tests
-cd frontend && npm run test:e2e
+# Manual E2E testing workflow
+# 1. Start application: python app.py
+# 2. Open browser: http://localhost:7860
+# 3. Execute test scenarios manually
+# 4. Document results and issues
 
-# Specific test file
-npx playwright test tests/auth.spec.ts
-
-# With UI mode (visual debugging)
-npx playwright test --ui
-
-# With headed browser (see the browser)
-npx playwright test --headed
-
-# Generate test report
-npx playwright show-report
+# For automated browser testing (if implemented)
+# Install Playwright: npx playwright install
+# Run tests: npx playwright test
 ```
+
+## Test Scenarios
+
+### Complete User Workflow Testing
+
+1. Test complete attendance analysis workflow:
+   - Load CSV data → Process data → Generate charts → Analyze results
+2. Test with different academic years (Y1-Y5) and data sources
+3. Verify placement mapping and pattern matching accuracy
+4. Test data export by copying from HTML tables
+5. Verify error handling displays clear messages
+
+### Data Quality Testing
+
+- Test with various CSV file formats (different years, semesters)
+- Test data cleaning and validation processes
+- Test error handling for malformed data (missing columns, bad formats)
+- Test with edge cases: missing data, duplicate records, invalid dates
+- Verify attendance calculation accuracy against manual calculations
+
+### User Interface Testing
+
+- Test file upload functionality with different file types
+- Test chart generation and interactive features
+- Test data filtering and selection capabilities
+- Test user interface responsiveness and usability
+- Test error messages and user guidance
+
+### Performance Testing
+
+- Test with large datasets to verify performance
+- Test memory usage during data processing
+- Test chart rendering speed with complex data
+- Test application startup and shutdown times
+- Verify system resource utilization
 
 ## Test Architecture
 
-### Page Object Pattern
+### Manual Test Procedures
 
-**Content should include:**
-- Why we use Page Objects (encapsulate page interactions, reduce duplication)
-- Page Object structure:
-  ```
-  e2etests/
-  ├── pages/
-  │   ├── AuthPage.ts
-  │   ├── DashboardPage.ts
-  │   ├── [FeatureA]Page.ts
-  │   └── [FeatureB]Page.ts
-  ├── fixtures/
-  │   └── test-fixtures.ts
-  └── tests/
-      ├── auth.spec.ts
-      ├── [feature-a].spec.ts
-      └── [feature-b].spec.ts
-  ```
-- How to create a new Page Object
-- Guidelines: Page Objects contain locators and actions, tests contain assertions
+- Step-by-step test procedures for each scenario
+- Test data preparation and setup
+- Expected results and verification steps
+- Test result documentation and reporting
+- Issue identification and troubleshooting
 
-### Test Fixtures
+### Browser Testing
 
-**Content should include:**
-- How to set up common fixtures (authenticated user, test data)
-- E2E test framework fixtures and how to extend them
-- Test isolation — each test starts from a known state
-- Database seeding for E2E tests (if applicable)
+- Test interface in different browsers (Chrome, Firefox, Safari, Edge)
+- Verify Gradio compatibility across browsers
+- Test responsive design on different screen sizes
+- Test JavaScript functionality and chart rendering
+- Verify accessibility features
 
-## Writing E2E Tests
+## Test Documentation
 
-### Authentication
+### Test Case Documentation
 
-**Content should include:**
-- How to handle auth in E2E tests
-- Saving and reusing auth state (e.g., `storageState`)
-- Testing with different user types
-- Handling OAuth redirects in tests
+- Document complete test scenarios and procedures
+- Record test results, issues, and resolutions
+- Maintain test data inventory and versions
+- Create test checklists and verification procedures
+- Document test environment requirements
 
-### Example Test
+### Regression Testing
 
-**Content should include:**
-- Complete example E2E test for a key user journey
-- Example of navigating between pages
-- Example of form filling and submission
-- Example of asserting success/error states
-- Example of waiting for API responses
+- Test existing functionality after application changes
+- Verify performance doesn't degrade with new versions
+- Test with historical data and edge cases
+- Validate backward compatibility for data formats
+- Test complete user workflows after changes
 
-### Best Practices
+## Test Automation (Optional)
 
-**Content should include:**
-- Test user journeys, not individual components
-- Keep tests independent (no ordering dependencies)
-- Use resilient locators (roles, labels, test IDs — not CSS selectors)
-- Handle async operations with auto-waiting
-- Take screenshots on failure for debugging
-- Keep tests fast: avoid unnecessary waits, use API calls for setup where possible
+### Simple Test Automation
+
+```python
+# e2e_test_scenarios.py
+import time
+import webbrowser
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+def test_attendance_workflow():
+    # Automated test for complete workflow
+    driver = webdriver.Chrome()
+    try:
+        driver.get('http://localhost:7860')
+        # Add automated interactions here
+        time.sleep(2)
+    finally:
+        driver.quit()
+
+if __name__ == '__main__':
+    test_attendance_workflow()
+```
+
+### Test Reporting
+
+- Generate test execution reports
+- Document test coverage and results
+- Track performance metrics during testing
+- Create issue reports for bugs found
+- Maintain test history and trends
 
 ## Debugging E2E Tests
 
-**Content should include:**
-- Using UI mode
-- Using trace viewer
-- Taking screenshots and videos on failure
-- Using `page.pause()` for interactive debugging
-- Viewing browser console output
-- Network request inspection
-
-## CI Integration
-
-**Content should include:**
-- How E2E tests run in the CI pipeline
-- Browser installation in CI environment
-- Test parallelisation
-- Artifact collection (reports, screenshots, traces)
-- Failure handling and retry strategy
+- Check browser console for JavaScript errors
+- Verify application is running on correct port
+- Check element locators are correct
+- Take screenshots on failure for debugging
+- Review application logs in terminal

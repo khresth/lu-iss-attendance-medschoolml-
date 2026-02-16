@@ -2,164 +2,119 @@
 
 ## General
 
-### What is [Project Name]?
+### What is the LU Medical School Attendance Tracker?
 
-**Content should include:**
-- Brief product description
-- Who it's for
-- What it helps with
+The LU Medical School Attendance Tracker is a data analysis tool for medical school staff to monitor and analyze student attendance patterns across different academic years and rotation placements. It provides visualizations and reports based on data exported from the ITPI attendance dashboard.
 
-### Who can use [Project Name]?
+### Who can use this application?
 
-**Content should include:**
-- [User Type A] (via organizational sign-in)
-- [User Type B] (via social provider sign-in)
-- How to request access if you don't have it
+Medical school staff, academic advisors, and administrators who need to track student attendance. The application runs locally on your machine - no external accounts or authentication required.
 
-### Is [Project Name] free to use?
+### Is there a cost to use this tool?
 
-**Content should include:**
-- Cost information
-- Any usage limits
+No - this is an internal tool provided by the medical school IT department at no cost to staff.
 
-### Is this a pilot or permanent service?
+## Getting Started
 
-**Content should include:**
-- Current status (pilot, beta, GA, etc.)
-- Duration of current phase
-- What happens after the current phase
+### How do I start the application?
 
-## Account & Access
+1. Ensure Python 3.8+ is installed
+2. Run `pip install -r requirements.txt` to install dependencies
+3. Place your CSV data files in the application directory
+4. Run `python app.py`
+5. Open your browser to http://localhost:7860
 
-### How do I sign in?
+### What data files do I need?
 
-**Content should include:**
-- Instructions for [User Type A] (organizational credentials)
-- Instructions for [User Type B] (social providers)
-- Link to detailed sign-in guide
+**Required:**
+- Attendance CSV files: `lusi_mbchb101.csv` through `lusi_mbchb501.csv` (exported from ITPI dashboard)
 
-### I can't sign in — what should I do?
+**Optional:**
+- Rotation mapping files: `y2r1.csv`, `y3r1.csv`, `y4r1.csv`, `y5r1.csv`
+- Student notes: `Book1.xlsx`
 
-**Content should include:**
-- Check you're using the correct sign-in method
-- Clear browser cache and cookies
-- Try a different browser
-- Check you have an active account
-- Check you've been invited (for external users)
-- Who to contact for help
+### Where do I get the data files?
 
-### How do I sign out?
+Export attendance data from the ITPI dashboard in CSV format. Contact your IT department if you need help accessing the dashboard or exporting data.
 
-**Content should include:**
-- Steps to sign out
-- Your data is preserved for next sign-in
+## Using the Application
 
-### Can I use [Project Name] on my phone?
+### How do I analyze attendance for a specific module?
 
-**Content should include:**
-- Current platform support (web browser, native app, etc.)
-- Mobile browser compatibility
-- Future native app plans (if any)
+1. Upload the relevant CSV file(s)
+2. Click "Load / Refresh Data"
+3. Select the module from the dropdown
+4. Choose date range and threshold
+5. Click "Analyze Attendance"
 
-## AI & Privacy
+### What is the placement pattern matching?
 
-### How does the AI work?
+The application automatically identifies medical placements using pattern matching on event descriptions. It recognizes patterns like "MED.PLAC", "MED.OTHR", and "Palliative Care" to categorize placement attendance separately from regular teaching sessions.
 
-**Content should include:**
-- High-level explanation of AI analysis
-- What AI model/service is used
-- What it can and cannot do
+### How are attendance percentages calculated?
 
-### Is my data used to train AI models?
+Attendance percentage = (Number of present sessions / Total sessions) × 100
 
-**Content should include:**
-- Clear statement: your documents are NOT used for AI training
-- Data processing is per-request only
-- AI service data handling commitments
+Cancelled sessions are excluded from calculations. Self-certified absences can be filtered separately.
 
-### Who can see my documents and feedback?
+### Can I export the charts and data?
 
-**Content should include:**
-- Only you can see your data
-- Staff access levels (for support and administration)
-- Data is not shared with other users
+Plotly charts can be saved as images using the camera icon in the top right of each chart. Data tables can be copied from the HTML output.
 
-### How accurate is the AI feedback?
+## Troubleshooting
 
-**Content should include:**
-- AI provides suggestions, not definitive answers
-- Accuracy limitations and known areas of weakness
-- Recommendation to complement with human advice
-- How to report inaccurate feedback
+### The application won't start
 
-### Can I delete my data?
+- Check Python is installed and in your PATH
+- Run `pip install -r requirements.txt` to ensure all dependencies are installed
+- Check if port 7860 is already in use
+- Look for error messages in the terminal
 
-**Content should include:**
-- How to request data deletion
-- What gets deleted
-- How long deletion takes
-- Data retention policy
+### CSV files won't load
 
-## Features
+- Verify files are in the same directory as app.py
+- Check file encoding is UTF-8
+- Ensure required columns are present: studentId, firstName, surname, academicAdvisor, startDateTime
+- Try re-exporting from ITPI dashboard
 
-### What file formats are supported?
+### Charts are not displaying
 
-**Content should include:**
-- Supported formats (e.g., PDF, DOCX)
-- Maximum file size
-- Tips for best results (formatting, readability)
+- Verify Plotly is installed: `pip install plotly`
+- Check browser console for JavaScript errors
+- Try a different web browser
+- Ensure data loaded successfully first
 
-### Are there usage limits?
+### The interface is slow
 
-**Content should include:**
-- Usage limits (if any)
-- How limits are tracked
+- Large datasets may take time to process
+- Try filtering to a smaller date range
+- Close other applications to free up memory
+- Consider using a more powerful machine for very large datasets
 
-### How does [Feature C] work?
+## Data & Privacy
 
-**Content should include:**
-- Brief overview of the feature
-- What types of content are generated
-- How feedback is provided
-- Tips for effective use
+### Is student data secure?
 
-### Can I redo a check with an updated document?
+Yes - all data processing happens locally on your machine. No data is transmitted to external servers or cloud services. Keep your workstation secure and follow medical school data protection policies.
 
-**Content should include:**
-- Yes — you can submit updated versions
-- How to access previous results
-- History is preserved
+### Can I share the application with colleagues?
 
-## Technical
+Yes - share the app.py file and documentation. Each user needs their own copy of the data files (or shared files if on a network drive). Do not share student data files outside authorized personnel.
 
-### Which browsers are supported?
+### How often should I update the data?
 
-**Content should include:**
-- Supported browsers and minimum versions
-- Known issues with specific browsers
-- Recommended browser
+Update frequency depends on your needs:
+- Weekly: For regular attendance monitoring
+- Monthly: For periodic reviews
+- Termly: For end-of-term reporting
 
-### The page is loading slowly — what can I do?
-
-**Content should include:**
-- Check internet connection
-- AI features may take longer to process
-- Clear browser cache
-- Try a different browser
-
-### I found a bug — how do I report it?
-
-**Content should include:**
-- How to report bugs (email, form, etc.)
-- What information to include (steps to reproduce, browser, screenshots)
-- Expected response time
+Always use the latest data from ITPI dashboard for accurate analysis.
 
 ## Support
 
 ### Who do I contact for help?
 
-**Content should include:**
-- Support contact information
-- Support hours
-- What they can help with
-- Self-service resources (this FAQ, user guide)
+- **Technical issues**: Medical school IT department
+- **Data access**: Contact your ITPI dashboard administrator
+- **Training**: Request training from medical school administration
+- **Bug reports**: Email the development team with details and screenshots

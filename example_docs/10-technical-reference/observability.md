@@ -2,142 +2,48 @@
 
 ## Overview
 
-Technical reference for the observability stack — logging, tracing, metrics, and error tracking.
+The LU Medical School Attendance Tracker is a local Python application with minimal observability needs. Since it's a single-user local tool, traditional observability infrastructure is not required.
 
-## Observability Architecture
+## Debugging Approach
 
-**Content should include:**
-- Diagram showing the observability data flow:
-  - Application -> OpenTelemetry SDK -> OTLP Exporter -> Monitoring Backend
-  - Application -> [Logging Framework] -> Console / File / Database sinks
-  - Application -> [Error Tracking Service] SDK -> Error Tracking Cloud
-- How the orchestrator dashboard provides local observability
+### Console Output
 
-## Structured Logging
+- Python print statements and error tracebacks appear in terminal
+- Gradio status messages shown in web interface
+- No external logging services or dashboards
 
-### Configuration
+### Application Monitoring
 
-**Content should include:**
-- Logging framework sinks configured:
-  - Console (for local development and container logs)
-  - File (rolling file in deployed environments)
-  - Database (audit-grade persistence)
-- Minimum log levels per namespace
-- Enrichment properties (machine name, environment, correlation ID)
+| Aspect | Method | Location |
+|--------|--------|----------|
+| Startup status | Terminal output | Console where `python app.py` runs |
+| File loading | Status textbox in Gradio UI | Main interface |
+| Data processing | Status messages | Analysis section |
+| Errors | Exception tracebacks | Terminal console |
 
-### Log Levels
+## Troubleshooting
 
-| Level | When to Use | Examples |
-|-------|-------------|---------|
-| `Verbose` | *Detailed diagnostic info, rarely enabled* | *SQL query text, full request bodies* |
-| `Debug` | *Diagnostic info useful during development* | *Cache hit/miss, config values loaded* |
-| `Information` | *Normal application behaviour* | *Request received, job completed, user signed in* |
-| `Warning` | *Unexpected but handled situations* | *Retry triggered, rate limit approached, slow query* |
-| `Error` | *Failed operations that need attention* | *Database error, AI service failure, unhandled exception* |
-| `Fatal` | *Application cannot continue* | *Startup failure, configuration missing* |
+### When Issues Occur
 
-### Logging Best Practices
+1. Check the terminal window running the application for Python errors
+2. Look at status messages in the Gradio interface
+3. Verify data files are properly formatted
+4. Check browser console for JavaScript errors (rare)
 
-**Content should include:**
-- Use structured logging (message templates, not string interpolation)
-- Include relevant context (user ID, entity ID, operation name)
-- Don't log sensitive data (tokens, passwords, PII)
-- Use scopes for grouping related log entries
-- Examples of good and bad log messages
+### Common Debug Steps
 
-## Distributed Tracing (OpenTelemetry)
+- Run `python app.py` in terminal to see all output
+- Use print() statements in app.py for debugging
+- Test data files separately in Python/pandas
+- Check file permissions and encoding
 
-### Configuration
+## No External Monitoring
 
-**Content should include:**
-- OpenTelemetry SDK setup in service defaults
-- Instrumentation libraries enabled:
-  - HTTP requests (inbound)
-  - Database queries
-  - Outbound HTTP calls
-- Custom spans for business operations
-- OTLP exporter configuration
+**Important:** This application does not use:
+- OpenTelemetry or distributed tracing
+- External logging services
+- Metrics dashboards
+- Error tracking services (Sentry, etc.)
+- Application Performance Monitoring (APM)
 
-### Trace Structure
-
-**Content should include:**
-- How traces flow through the system:
-  - Frontend request -> Gateway -> API -> Database / AI Service
-- Trace context propagation (W3C TraceContext headers)
-- Span naming conventions
-- Custom attributes added to spans
-
-### Querying Traces
-
-**Content should include:**
-- How to find traces in the orchestrator dashboard (local)
-- How to find traces in the cloud monitoring service (deployed)
-- Useful trace queries:
-  - Find slow requests
-  - Find failed requests
-  - Trace a specific user's requests
-  - Find database-heavy operations
-
-## Metrics
-
-### Available Metrics
-
-**Content should include:**
-- HTTP request metrics (rate, duration, status code distribution)
-- Database query metrics (rate, duration)
-- AI service metrics (rate, duration, token usage)
-- Background job metrics (queue depth, processing time, failure rate)
-- Custom business metrics (if any)
-
-### Dashboards
-
-**Content should include:**
-- Where to find metrics dashboards
-- Key metrics to monitor
-- How to add new metrics
-
-## Error Tracking
-
-### Configuration
-
-**Content should include:**
-- Backend error tracking SDK setup
-- Frontend error tracking SDK setup
-- DSN per environment
-- Release and environment tagging
-- Source map configuration (frontend)
-
-### Issue Management
-
-**Content should include:**
-- How errors appear in the error tracking service
-- Grouping and deduplication
-- Assignment and triage workflow
-- Alert rules configured
-- Integration with work item tracking (if configured)
-
-### PII Scrubbing
-
-**Content should include:**
-- What data is scrubbed before sending to error tracking
-- Scrubbing rules configuration
-- How to verify scrubbing is working
-
-## Orchestrator Dashboard (Local Development)
-
-**Content should include:**
-- How to access the dashboard
-- Features:
-  - Resource status and health
-  - Structured logs with filtering
-  - Distributed traces with timeline view
-  - Console output per resource
-- Using dashboard tools from CLI for programmatic access
-
-## Correlation IDs
-
-**Content should include:**
-- How correlation IDs are generated
-- How they propagate through the request pipeline
-- How to find related logs/traces using a correlation ID
-- Where correlation IDs appear in error responses (`requestId`)
+All debugging is done through local console output and the Gradio interface status messages.

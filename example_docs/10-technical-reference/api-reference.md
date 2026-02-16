@@ -2,119 +2,51 @@
 
 ## Overview
 
-Comprehensive reference for the [Project Name] REST API.
+The LU Medical School Attendance Tracker is a local Gradio application and does not expose a REST API. All functionality is accessed through the Gradio web interface at http://localhost:7860.
 
-## Base URL
+## Application Interface
 
-| Environment | Base URL |
+### Access URL
+
+| Environment | URL |
 |------------|----------|
-| Local | `https://localhost:[port]` (via Gateway) |
-| Staging | *staging gateway URL* |
-| Production | *production gateway URL* |
+| Local | `http://localhost:7860` |
 
-## Authentication
+### Interface Components
 
-**Content should include:**
-- All endpoints require a Bearer token (JWT from [Identity Provider])
-- Token must be included in the `Authorization` header: `Bearer <token>`
-- How to obtain a token (OAuth flow via [Auth SDK])
-- Token format and expected claims
+- File upload components for CSV and Excel files
+- Dropdown selectors for modules, dates, and thresholds
+- Interactive charts using Plotly
+- Data tables displayed as HTML
+- Text inputs for student search
 
-## Common Response Format
+## Data Processing Functions
 
-### Success Response
+### Core Functions
 
-```json
-{
-  "data": { ... }
-}
-```
+| Function | Purpose | Location |
+|----------|---------|----------|
+| `load_and_clean_data()` | Load and validate attendance CSV files | `app.py` |
+| `load_y5_rotation_data()` | Load Year 5 rotation mapping | `app.py` |
+| `load_y3_rotation_data()` | Load Year 3 rotation mapping | `app.py` |
+| `load_y4_rotation_data()` | Load Year 4 rotation mapping | `app.py` |
+| `load_y2_rotation_data()` | Load Year 2 rotation mapping | `app.py` |
+| `load_notes()` | Load student notes from Excel | `app.py` |
+| `analyze_attendance()` | Main attendance analysis logic | `app.py` |
+| `plot_student_attendance()` | Generate student attendance charts | `app.py` |
+| `macro_attendance()` | Macro view of placement attendance | `app.py` |
 
-### Error Response
+## Error Handling
 
-```json
-{
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Human-readable error description",
-    "details": { ... }
-  },
-  "requestId": "correlation-id-here"
-}
-```
+### Common Errors
 
-**Content should include:**
-- List of standard error codes
-- HTTP status code mapping
-- How `requestId` can be used for debugging
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| "File not provided" | Missing CSV file | Upload required data file |
+| "Missing required columns" | Invalid CSV format | Check CSV has required columns |
+| "Error loading file" | File corruption or encoding | Re-export from ITPI dashboard |
+| "No data" | Empty date range or filters | Adjust date range or filters |
 
-## Endpoints
+## No External API
 
-### [Resource A] (e.g., Core Domain Objects)
-
-**Content should include for each endpoint:**
-- HTTP method and path
-- Description
-- Request headers
-- Request body schema (with examples)
-- Response body schema (with examples)
-- Possible error responses
-- Authentication/authorisation requirements
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/[resource-a]` | *List user's items* |
-| `POST` | `/api/[resource-a]` | *Create a new item* |
-| `GET` | `/api/[resource-a]/{id}` | *Get a specific item* |
-| `PUT` | `/api/[resource-a]/{id}` | *Update an item* |
-| `DELETE` | `/api/[resource-a]/{id}` | *Delete an item* |
-
-### [Resource B] (e.g., AI Feature A)
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/[resource-b]` | *Submit for AI analysis* |
-| `GET` | `/api/[resource-b]/{id}` | *Get analysis results* |
-
-### [Resource C] (e.g., AI Feature B)
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/[resource-c]` | *Submit for AI analysis* |
-| `GET` | `/api/[resource-c]/{id}` | *Get analysis results* |
-
-### Terms
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/terms/accept` | *Record terms acceptance* |
-| `GET` | `/api/terms/status` | *Check terms acceptance status* |
-
-### Users (Admin)
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/users` | *List allowed users* |
-| `POST` | `/api/users` | *Invite a new user* |
-| `DELETE` | `/api/users/{id}` | *Remove a user* |
-
-### Resources
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/resources` | *List learning resources* |
-
-### Prompts (Admin)
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/prompts` | *List AI prompts* |
-| `PUT` | `/api/prompts/{id}` | *Update an AI prompt* |
-
-## OpenAPI / Swagger
-
-**Content should include:**
-- Swagger UI URL: `https://localhost:[port]/swagger` (local)
-- How to download the OpenAPI spec
-- How the spec is used for frontend code generation
-- Versioning approach for the API spec
+**Important:** This application does not expose any external API endpoints. It is designed as a standalone local tool with no network-facing interfaces beyond the Gradio web UI.

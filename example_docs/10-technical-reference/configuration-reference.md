@@ -2,95 +2,73 @@
 
 ## Overview
 
-Comprehensive reference for all configuration keys, environment variables, and feature flags.
+The LU Medical School Attendance Tracker is a simple local Python application with minimal configuration requirements. Most settings are handled through file locations and Gradio's default behavior.
 
-## Backend Configuration
+## Application Configuration
 
-### Connection Strings
+### File Paths
 
-| Key | Description | Example | Source |
-|-----|-------------|---------|--------|
-| `ConnectionStrings:[ProjectName]Db` | *Database connection* | *Server=...;Database=...* | *Secrets Manager* |
+| Setting | Description | Default | Notes |
+|---------|-------------|---------|-------|
+| CSV Data Files | Location of attendance data | Same directory as app.py | Files: lusi_mbchb*.csv |
+| Rotation Files | Location of placement mapping | Same directory as app.py | Files: y*r1.csv |
+| Notes File | Student notes Excel file | Same directory as app.py | Book1.xlsx (optional) |
 
-### Auth (Primary Pool)
+### Gradio Configuration
 
-| Key | Description | Example |
-|-----|-------------|---------|
-| `[Auth]:Authority` | *Identity provider issuer URL for primary pool* | `https://[idp-url]/[pool-id]` |
-| `[Auth]:ClientId` | *App client ID* | *GUID* |
+| Setting | Description | Default | Notes |
+|---------|-------------|---------|-------|
+| Port | Web interface port | 7860 | Auto-selected if in use |
+| Host | Interface binding | 127.0.0.1 | Localhost only |
+| Share | Public URL sharing | False | Keep disabled for data privacy |
 
-### Auth (Secondary Pool)
+## Python Dependencies
 
-| Key | Description | Example |
-|-----|-------------|---------|
-| `[ProjectName].ExternalAuth:Authority` | *Identity provider issuer URL for secondary pool* | `https://[idp-url]/[pool-id]` |
-| `[ProjectName].ExternalAuth:ClientId` | *App client ID* | *GUID* |
+### Required Packages
 
-### Secrets Manager
+| Package | Purpose | Version |
+|---------|---------|---------|
+| gradio | Web interface framework | Latest |
+| pandas | Data processing | Latest |
+| plotly | Data visualization | Latest |
+| openpyxl | Excel file reading | Latest |
 
-| Key | Description | Example |
-|-----|-------------|---------|
-| `[SecretsManager]:Endpoint` | *Secrets manager URI* | `https://[resource-name].[provider-domain]/` |
+## Environment Variables
 
-### Error Tracking
+The application does not require environment variables for basic operation. All configuration is through:
+- File locations in the application directory
+- User inputs through the Gradio interface
+- Default Gradio and Pandas behaviors
 
-| Key | Description | Example |
-|-----|-------------|---------|
-| `[ErrorTracking]:Dsn` | *Error tracking DSN* | `https://xxx@[provider]/xxx` |
-| `[ErrorTracking]:Environment` | *Environment tag* | `staging` / `production` |
+## Data File Format Requirements
 
-### Logging
+### Attendance CSV Files (lusi_mbchb*.csv)
 
-| Key | Description | Example |
-|-----|-------------|---------|
-| `[Logging]:MinimumLevel:Default` | *Default log level* | `Information` |
-| `[Logging]:MinimumLevel:Override:*` | *Log level overrides per namespace* | `Warning` |
+| Column | Required | Description |
+|--------|----------|-------------|
+| studentId | Yes | Unique student identifier |
+| firstName | Yes | Student first name |
+| surname | Yes | Student surname |
+| academicAdvisor | Yes | Assigned advisor name |
+| startDateTime | Yes | Session timestamp (ISO format) |
+| present | No | Attendance status (true/false) |
+| selfCertInfo | No | Self-certification flag |
+| cancelled | No | Cancellation status |
 
-### Background Tasks
+### Rotation Mapping Files (y*r1.csv)
 
-| Key | Description | Example |
-|-----|-------------|---------|
-| `BackgroundTasks:*` | *Background job framework configuration* | *Various* |
+| Column | Required | Description |
+|--------|----------|-------------|
+| Student ID | Yes | Student identifier |
+| Group | No | Rotation group number |
+| Pattern | No | Placement pattern code |
+| Rotation 1 | No | Rotation name (Y5) |
 
-### Configuration Service
+### Student Notes File (Book1.xlsx)
 
-| Key | Description | Example |
-|-----|-------------|---------|
-| `AppConfig:Endpoint` | *Configuration service endpoint* | `https://[resource-name].[provider-domain]` |
-
-## Frontend Environment Variables
-
-| Variable | Description | Set By | Example |
-|----------|-------------|--------|---------|
-| `[PREFIX]_API_BASE_URL` | *Backend gateway URL* | *[Orchestrator] (local) / build config (deployed)* | `https://localhost:[port]` |
-| `[PREFIX]_URL_PATH` | *Base path for routing* | *Build config* | `/` |
-| `[PREFIX]_ENV` | *Environment identifier* | *Build config* | `stg` / `prod` |
-| `PORT` | *Dev server port* | *[Orchestrator]* | `[port]` |
-
-## Feature Flags
-
-**Content should include:**
-
-| Flag | Description | Default | Notes |
-|------|-------------|---------|-------|
-| *flag-name* | *What the flag controls* | *on/off* | *When to use* |
-
-- How feature flags are managed (configuration service)
-- How to check a flag's value in code (backend and frontend)
-- How to add a new feature flag
-
-## Orchestrator Configuration
-
-**Content should include:**
-- How the orchestrator configures each service
-- Environment variable injection
-- Service reference URLs
-- Resource naming conventions
-
-## Secrets Inventory
-
-**Content should include:**
-- List of all secrets in secrets manager (names only, not values)
-- Which service uses each secret
-- Rotation schedule for each secret
-- How to update a secret
+| Column | Required | Description |
+|--------|----------|-------------|
+| Student ID | Yes | Student identifier |
+| Email | No | Student email address |
+| Notes 1 | No | First notes field |
+| Notes 2 | No | Second notes field |
