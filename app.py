@@ -305,10 +305,11 @@ def analyze_attendance(module, start_date, end_date, threshold, show_self_cert, 
         below = below[below['studentId'].isin(selfcert)]
     if not below.empty:
         below = below.merge(notes_grouped, left_on='studentId', right_on='studentId', how='left').fillna({'notes': '', 'studentEmail': ''})
-        ascending = (sort_order == "Lowest to Highest")
-        below = below.sort_values(by='attendance_percentage', ascending=ascending)
         if secondary_sort_by_surname:
-            below = below.sort_values(by=['surname', 'firstName'], ascending=True).reset_index(drop=True)
+            below = below.sort_values(by=['surname', 'firstName'], ascending=[True, True])
+        else:
+            ascending = (sort_order == "Lowest to Highest")
+            below = below.sort_values(by='attendance_percentage', ascending=ascending)
     count_html = f"<p><strong>{len(below)} record(s) found.</strong></p>"
     table_html = "<p>No students below threshold.</p>" if below.empty else (
         count_html +
@@ -363,8 +364,11 @@ def analyze_attendance(module, start_date, end_date, threshold, show_self_cert, 
             all_placement = all_placement.merge(dates_agg, on='studentId', how='left')
             all_placement['Med.Plac Dates'] = all_placement['Med.Plac Dates'].fillna('None found')
             all_placement = all_placement.merge(notes_grouped, left_on='studentId', right_on='studentId', how='left').fillna({'studentEmail': ''})
-            ascending_placement = (placement_sort == "Least Placement Days First")
-            all_placement = all_placement.sort_values(by='Total_Days_Attended', ascending=ascending_placement)
+            if secondary_sort_by_surname:
+                all_placement = all_placement.sort_values(by=['surname', 'firstName'], ascending=True)
+            else:
+                ascending_placement = (placement_sort == "Least Placement Days First")
+                all_placement = all_placement.sort_values(by='Total_Days_Attended', ascending=ascending_placement)
             all_placement = all_placement.rename(columns={
                 'studentId': 'Student ID', 'firstName': 'First Name', 'surname': 'Surname',
                 'studentEmail': 'Student Email'
@@ -423,6 +427,8 @@ def analyze_attendance(module, start_date, end_date, threshold, show_self_cert, 
                     'studentId': 'Student ID', 'firstName': 'First Name', 'surname': 'Surname',
                     'studentEmail': 'Student Email', 'eventDescription': 'Event Description', 'notes': 'Notes'
                 })
+                if secondary_sort_by_surname:
+                    medplac_df = medplac_df.sort_values(by=['Surname', 'First Name'], ascending=True)
                 medplac_html = (
                     "<h3>Explicit Placement Absences</h3>" +
                     medplac_df[['Student ID', 'First Name', 'Surname', 'Group', 'Student Email', 'Event Description', 'Date', 'Notes']].to_html(index=False)
@@ -430,7 +436,7 @@ def analyze_attendance(module, start_date, end_date, threshold, show_self_cert, 
     full_med_html = (medplac_html + "<br>" + med_table_html) if medplac_html or med_table_html else "<p>No placement data.</p>"
     return "Analysis complete.", table_html, "", gr.update(choices=student_choices, value=None), None, full_med_html
 
-def macro_attendance(module, days_back):
+def macro_attendance(module, days_back, sort_alphabetically):
     global loaded_notes_df
     if module not in loaded_module_dfs:
         return "<p>Module not loaded.</p>"
@@ -438,10 +444,11 @@ def macro_attendance(module, days_back):
     cutoff = datetime.now() - timedelta(days=days_back)
     med_events = df[
         df['eventDescription'].str.contains(PLACEMENT_PATTERNS, na=False) &
-        (df['startDateTime'] >= cutoff)
+        (df['startDateTime'] >= cutoff) &
+        (df['present'] == True)          # <-- ONLY ATTENDED PLACEMENTS (no absences)
     ]
     if med_events.empty:
-        return f"<p>No placement events (MED.PLAC or MED.OTHR) found in the last {days_back} days.</p>"
+        return f"<p>No attended placement events (MED.PLAC or MED.OTHR) found in the last {days_back} days.</p>"
     counts = med_events.groupby(['studentId', 'firstName', 'surname']).size().reset_index(name='Placement_Count')
     rotation_map = loaded_rotation_maps.get("Y5R1" if module.startswith('5') else "Y3R1" if module.startswith('3') else "Y4R1" if module.startswith('4') else "Y2", {})
     if module.startswith('2'):
@@ -459,7 +466,12 @@ def macro_attendance(module, days_back):
     else:
         counts['Group'] = counts['Pattern'] = 'N/A'
     counts = counts.merge(loaded_notes_df, left_on='studentId', right_on='studentId', how='left').fillna({'studentEmail': ''})
-    counts = counts.sort_values('Placement_Count')
+    
+    if sort_alphabetically:
+        counts = counts.sort_values(by=['surname', 'firstName'], ascending=[True, True])
+    else:
+        counts = counts.sort_values('Placement_Count', ascending=True)   # lowest first (original behaviour)
+    
     table = counts.rename(columns={
         'studentId': 'Student ID',
         'firstName': 'First Name',
@@ -467,9 +479,9 @@ def macro_attendance(module, days_back):
         'studentEmail': 'Student Email',
         'Group': 'Group/Rotation',
         'Pattern': 'Pattern',
-        'Placement_Count': f'Placement Events (Last {days_back} days)'
-    })[['Student ID', 'First Name', 'Surname', 'Student Email', 'Group/Rotation', 'Pattern', f'Placement Events (Last {days_back} days)']].to_html(index=False, escape=False)
-    header = f"<h3>Placement Attendance Macro View – Last {days_back} days<br><small>(MED.PLAC and MED.OTHR - includes multiple check ins per day)</small></h3>"
+        'Placement_Count': f'Attended Placement Events (Last {days_back} days)'
+    })[['Student ID', 'First Name', 'Surname', 'Student Email', 'Group/Rotation', 'Pattern', f'Attended Placement Events (Last {days_back} days)']].to_html(index=False, escape=False)
+    header = f"<h3>Attended Placement Macro View – Last {days_back} days<br><small>(MED.PLAC and MED.OTHR - attended check-ins only, includes multiple per day)</small></h3>"
     return header + table
 
 with gr.Blocks() as demo:
@@ -502,7 +514,7 @@ with gr.Blocks() as demo:
     with gr.Row():
         thresh_dd = gr.Dropdown(choices=[str(i) for i in range(10,101,10)] + ["100"], label="Threshold (%)", value="50")
         sort_dd = gr.Dropdown(choices=["Lowest to Highest", "Highest to Lowest"], label="Sort Attendance", value="Lowest to Highest")
-        sec_sort_cb = gr.Checkbox(label="Also sort by surname (A–Z)", value=True)
+        sec_sort_cb = gr.Checkbox(label="Sort all tables alphabetically by surname (A–Z) [overrides other sort options]", value=True)
         plac_sort_dd = gr.Dropdown(choices=["Least Placement Days First", "Most Placement Days First"], label="Sort Placement", value="Least Placement Days First")
 
     self_cert_cb = gr.Checkbox(label="Show only self-certified absences", value=False)
@@ -536,7 +548,7 @@ with gr.Blocks() as demo:
 
     student_radio.change(plot_student_attendance, inputs=[module_dd, student_radio], outputs=[attendance_graph, absence_text])
 
-    macro_btn.click(macro_attendance, inputs=[module_dd, days_slider], outputs=macro_table)
+    macro_btn.click(macro_attendance, inputs=[module_dd, days_slider, sec_sort_cb], outputs=macro_table)
 
     gr.Markdown("**Instructions:** Upload files first, click 'Load / Refresh Data', then select a module and analyze.")
 
